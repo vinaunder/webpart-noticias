@@ -23,3 +23,8 @@ export interface NoticiasCarrosel {
   Box1: PublishingPage;
   Box2: PublishingPage;
 }
+
+export interface NoticiasHome {
+  Box1: PublishingPage[];
+  Box2: PublishingPage;
+}

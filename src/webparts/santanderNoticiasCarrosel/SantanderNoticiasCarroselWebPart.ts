@@ -38,11 +38,9 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
 > {
   public NoticiasCarrosel: NoticiasCarrosel;
   public render(): void {
-    var ds = null;
     if (this.properties.Layout == "2colunas") {
       this.getAllListItemsCarrosel().then((ret: NoticiasCarrosel): void => {
         this.NoticiasCarrosel = ret;
-        console.log("noticiascollection", this.NoticiasCarrosel);
         const carousel: any = document.createElement("snt-carousel");
         carousel.datasource = this.NoticiasCarrosel;
         carousel.readmore = this.properties.ReadMore;
@@ -155,8 +153,8 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             SANFullHtml: r[i].SANSinopse1,
             SANDataVigencia: r[i].SANDataVigencia,
             SANDestaquePub: iconUrl,
-            SANDestaqueCarrosel: iconUrl + "?RenditionID=5",
-            SANDestaqueCarrosel2: iconUrl + "?RenditionID=6",
+            SANDestaqueCarrosel: iconUrl + "?RenditionID=7",
+            SANDestaqueCarrosel2: iconUrl + "?RenditionID=11",
             link: r[i].EncodedAbsUrl
           });
           if (i == quantidadeCarrosel - 1) {
