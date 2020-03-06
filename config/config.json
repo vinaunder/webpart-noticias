@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "santander-noticias-carrosel-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/santanderNoticiasCarrosel/SantanderNoticiasCarroselWebPart.js",
+          "manifest": "./src/webparts/santanderNoticiasCarrosel/SantanderNoticiasCarroselWebPart.manifest.json"
+        }
+      ]
+    },
+    "santander-noticias-cards-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/santanderNoticiasCards/SantanderNoticiasCardsWebPart.js",
+          "manifest": "./src/webparts/santanderNoticiasCards/SantanderNoticiasCardsWebPart.manifest.json"
+        }
+      ]
+    },
+    "santander-noticias-home-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/santanderNoticiasHome/SantanderNoticiasHomeWebPart.js",
+          "manifest": "./src/webparts/santanderNoticiasHome/SantanderNoticiasHomeWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "SantanderNoticiasCarroselWebPartStrings": "lib/webparts/santanderNoticiasCarrosel/loc/{locale}.js",
+    "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js",
+    "SantanderNoticiasCardsWebPartStrings": "lib/webparts/santanderNoticiasCards/loc/{locale}.js",
+    "SantanderNoticiasHomeWebPartStrings": "lib/webparts/santanderNoticiasHome/loc/{locale}.js"
+  }
+}
