@@ -36,16 +36,22 @@ export interface ISantanderNoticiasCarroselWebPartProps {
 export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebPart<
   ISantanderNoticiasCarroselWebPartProps
 > {
+  public NoticiasCarrosel: NoticiasCarrosel;
   public render(): void {
     var ds = null;
     if (this.properties.Layout == "2colunas") {
-      ds = this.getAllListItemsCarrosel();
-      console.log("noticiascollection", ds);
-      console.log("props", this.properties);
+      this.getAllListItemsCarrosel().then((ret: NoticiasCarrosel): void => {
+        this.NoticiasCarrosel = ret;
+        console.log("noticiascollection", this.NoticiasCarrosel);
+        const carousel: any = document.createElement("snt-carousel");
+        carousel.datasource = this.NoticiasCarrosel;
+        carousel.readmore = this.properties.ReadMore;
+        carousel.readmoreon = this.properties.ReadMoreOn;
+        this.domElement.innerHTML = "";
+        this.domElement.appendChild(carousel);
+      });
     } else {
-      ds = null;
     }
-    this.domElement.innerHTML = `<santander-noticias-carrosel datasource="${ds}" layout="${this.properties.Layout}" readmore="${this.properties.ReadMore}" readmoreon="${this.properties.ReadMoreOn}"></santander-noticias-carrosel>`;
   }
 
   public _Noticias: PublishingPage[] = [
@@ -66,7 +72,8 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
       SANFullHtml: "Conteudo de Noticias",
       SANCategorias: ["Riscos", "Segurança", "CyberDefesa"],
       SANDestaqueCarrosel: "iconUrl",
-      SANDestaqueCarrosel2: "iconUrl"
+      SANDestaqueCarrosel2: "iconUrl",
+      link: "url"
     },
     {
       Id: 1,
@@ -85,13 +92,14 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
       SANFullHtml: "Conteudo de Noticias 2",
       SANCategorias: ["Riscos", "Segurança", "CyberDefesa"],
       SANDestaqueCarrosel: "iconUrl",
-      SANDestaqueCarrosel2: "iconUrl"
+      SANDestaqueCarrosel2: "iconUrl",
+      link: "url"
     }
   ];
   public _NoticiasContent: NoticiasCarrosel = {
     Carrosel: this._Noticias,
-    Box1: this._Noticias,
-    Box2: this._Noticias
+    Box1: this._Noticias[0],
+    Box2: this._Noticias[1]
   };
 
   public async getAllListItemsCarrosel(): Promise<NoticiasCarrosel> {
@@ -105,7 +113,8 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
         {
           ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`
         },
-        "FieldValuesAsText"
+        "FieldValuesAsText",
+        "EncodedAbsUrl"
       );
       const quantidadeCarrosel = quantidade - 2;
       // var itemNoticias: NoticiasCarrosel;
@@ -114,8 +123,8 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
       // itemNoticias.Box2 = [];
 
       let itemNoticiasCarrosel: PublishingPage[] = [];
-      let ItemNoticiaBox1: PublishingPage[] = [];
-      let ItemNoticiaBox2: PublishingPage[] = [];
+      let ItemNoticiaBox1: PublishingPage;
+      let ItemNoticiaBox2: PublishingPage;
 
       // look through the returned items.
       let CountBox1 = 0;
@@ -147,14 +156,15 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             SANDataVigencia: r[i].SANDataVigencia,
             SANDestaquePub: iconUrl,
             SANDestaqueCarrosel: iconUrl + "?RenditionID=5",
-            SANDestaqueCarrosel2: iconUrl + "?RenditionID=6"
+            SANDestaqueCarrosel2: iconUrl + "?RenditionID=6",
+            link: r[i].EncodedAbsUrl
           });
           if (i == quantidadeCarrosel - 1) {
             CountBox1++;
           }
         }
         if (CountBox1 == 1) {
-          ItemNoticiaBox1.push({
+          ItemNoticiaBox1 = {
             Id: r[i].ID,
             Title: r[i].Title,
             Created: r[i].Created,
@@ -171,11 +181,12 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             SANDataVigencia: r[i].SANDataVigencia,
             SANDestaquePub: iconUrl,
             SANDestaqueCarrosel: iconUrl + "?RenditionID=5",
-            SANDestaqueCarrosel2: iconUrl + "?RenditionID=6"
-          });
+            SANDestaqueCarrosel2: iconUrl + "?RenditionID=6",
+            link: r[i].EncodedAbsUrl
+          };
         }
         if (CountBox1 == 2) {
-          ItemNoticiaBox2.push({
+          ItemNoticiaBox2 = {
             Id: r[i].ID,
             Title: r[i].Title,
             Created: r[i].Created,
@@ -192,8 +203,9 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             SANDataVigencia: r[i].SANDataVigencia,
             SANDestaquePub: iconUrl,
             SANDestaqueCarrosel: iconUrl + "?RenditionID=5",
-            SANDestaqueCarrosel2: iconUrl + "?RenditionID=6"
-          });
+            SANDestaqueCarrosel2: iconUrl + "?RenditionID=6",
+            link: r[i].EncodedAbsUrl
+          };
           CountBox1++;
         }
         if (CountBox1 == 1) CountBox1++;

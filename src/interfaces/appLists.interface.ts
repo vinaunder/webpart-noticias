@@ -16,9 +16,10 @@ export interface PublishingPage {
   SANAreas: string[];
   SANFullHtml: string;
   SANCategorias: string[];
+  link: string;
 }
 export interface NoticiasCarrosel {
   Carrosel: PublishingPage[];
-  Box1: PublishingPage[];
-  Box2: PublishingPage[];
+  Box1: PublishingPage;
+  Box2: PublishingPage;
 }
