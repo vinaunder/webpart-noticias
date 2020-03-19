@@ -30,7 +30,9 @@
       "description": "wpCarroselNoticias",
       "SiteUrl": "/noticias",
       "ListName": "Pages",
-      "QtdItens": 50
+      "QtdItens": 6,
+      "Filtro": "Filtro",
+      "FiltroOn": true
     }
   }]
 }

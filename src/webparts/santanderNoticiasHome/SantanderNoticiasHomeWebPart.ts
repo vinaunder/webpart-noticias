@@ -113,7 +113,6 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
       let CountBox1 = 0;
       for (var i = 0; i < r.length; i++) {
         let iconUrl = null;
-        console.log("i:", i);
         const matches = /SANDestaquePub:SW\|(.*?)\r\n/gi.exec(
           r[i].FieldValuesAsText.MetaInfo
         );
@@ -130,7 +129,7 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
             SANSinopse1: r[i].SANSinopse1,
             SANAreas: r[i].SANAreas,
             SANAtivo: r[i].SANAtivo,
-            SANCategorias: ["Categoria"], //r[i].SANCategoriasd,
+            SANCategorias: r[i].SANCategorias,
             SANDestaqueHome: r[i].SANDestaqueHome,
             SANOrdem1: r[i].SANOrdem1,
             SANResponsavel: null,
@@ -155,7 +154,7 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
             SANSinopse1: r[i].SANSinopse1,
             SANAreas: r[i].SANAreas,
             SANAtivo: r[i].SANAtivo,
-            SANCategorias: ["Categoria"], //r[i].SANCategoriasd,
+            SANCategorias: r[i].SANCategorias,
             SANDestaqueHome: r[i].SANDestaqueHome,
             SANOrdem1: r[i].SANOrdem1,
             SANResponsavel: null,

@@ -145,7 +145,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             SANSinopse1: r[i].SANSinopse1,
             SANAreas: r[i].SANAreas,
             SANAtivo: r[i].SANAtivo,
-            SANCategorias: ["Categoria"], //r[i].SANCategoriasd,
+            SANCategorias: r[i].SANCategorias,
             SANDestaqueHome: r[i].SANDestaqueHome,
             SANOrdem1: r[i].SANOrdem1,
             SANResponsavel: null,
@@ -153,8 +153,8 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             SANFullHtml: r[i].SANSinopse1,
             SANDataVigencia: r[i].SANDataVigencia,
             SANDestaquePub: iconUrl,
-            SANDestaqueCarrosel: iconUrl + "?RenditionID=7",
-            SANDestaqueCarrosel2: iconUrl + "?RenditionID=11",
+            SANDestaqueCarrosel: iconUrl + "?RenditionID=5",
+            SANDestaqueCarrosel2: iconUrl + "?RenditionID=7",
             link: r[i].EncodedAbsUrl
           });
           if (i == quantidadeCarrosel - 1) {
