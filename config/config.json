@@ -25,6 +25,14 @@
           "manifest": "./src/webparts/santanderNoticiasHome/SantanderNoticiasHomeWebPart.manifest.json"
         }
       ]
+    },
+    "santander-noticias-carousel-interno-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/santanderNoticiasCarouselInterno/SantanderNoticiasCarouselInternoWebPart.js",
+          "manifest": "./src/webparts/santanderNoticiasCarouselInterno/SantanderNoticiasCarouselInternoWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
@@ -32,6 +40,7 @@
     "SantanderNoticiasCarroselWebPartStrings": "lib/webparts/santanderNoticiasCarrosel/loc/{locale}.js",
     "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js",
     "SantanderNoticiasCardsWebPartStrings": "lib/webparts/santanderNoticiasCards/loc/{locale}.js",
-    "SantanderNoticiasHomeWebPartStrings": "lib/webparts/santanderNoticiasHome/loc/{locale}.js"
+    "SantanderNoticiasHomeWebPartStrings": "lib/webparts/santanderNoticiasHome/loc/{locale}.js",
+    "SantanderNoticiasCarouselInternoWebPartStrings": "lib/webparts/santanderNoticiasCarouselInterno/loc/{locale}.js"
   }
 }

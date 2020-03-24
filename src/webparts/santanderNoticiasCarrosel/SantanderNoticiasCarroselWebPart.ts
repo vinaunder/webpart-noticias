@@ -19,7 +19,8 @@ import * as strings from "SantanderNoticiasCarroselWebPartStrings";
 // import { NoticiasDS } from "./../../services/appLists.service";
 import {
   PublishingPage,
-  NoticiasCarrosel
+  NoticiasCarrosel,
+  NoticiasCarroselInterno
 } from "./../../interfaces/appLists.interface";
 import { SPFXutils } from "./../../services/util.service";
 
@@ -31,12 +32,14 @@ export interface ISantanderNoticiasCarroselWebPartProps {
   ReadMore: string;
   ReadMoreOn: boolean;
   Layout: string;
+  Caml: string;
 }
 
 export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebPart<
   ISantanderNoticiasCarroselWebPartProps
 > {
   public NoticiasCarrosel: NoticiasCarrosel;
+  public NoticiasCarroselInterno: NoticiasCarroselInterno;
   public render(): void {
     if (this.properties.Layout == "2colunas") {
       this.getAllListItemsCarrosel().then((ret: NoticiasCarrosel): void => {
@@ -48,7 +51,16 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
         this.domElement.innerHTML = "";
         this.domElement.appendChild(carousel);
       });
-    } else {
+    } else if (this.properties.Layout == "interno") {
+      this.getAllListItemsCarroseInterno().then(
+        (ret: NoticiasCarroselInterno): void => {
+          this.NoticiasCarroselInterno = ret;
+          const carousel: any = document.createElement("snt-carousel-interno");
+          carousel.datasource = this.NoticiasCarroselInterno;
+          this.domElement.innerHTML = "";
+          this.domElement.appendChild(carousel);
+        }
+      );
     }
   }
 
@@ -100,13 +112,17 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
     Box2: this._Noticias[1]
   };
 
+  public _NoticiasContentInterno: NoticiasCarroselInterno = {
+    Carrosel: this._Noticias
+  };
+
   public async getAllListItemsCarrosel(): Promise<NoticiasCarrosel> {
     try {
       const w = Web(this.properties.SiteUrl);
       let quantidade = this.properties.QtdItens;
       const rowLimit = `<RowLimit>${quantidade}</RowLimit>`;
       const queryOptions = `<QueryOptions><ViewAttributes Scope='RecursiveAll'/></QueryOptions>`;
-      const camlQuery = `<Query><Where><And><Eq><FieldRef Name='SANDestaquePrincipal' /><Value Type='Boolean'>1</Value></Eq><Eq><FieldRef Name='SANAtivo' /><Value Type='Boolean'>1</Value></Eq></And></Where><OrderBy><FieldRef Name='SANOrdem1' Ascending='True' /></OrderBy></Query>`;
+      const camlQuery = this.properties.Caml;
       const r = await w.lists.getByTitle("Pages").getItemsByCAMLQuery(
         {
           ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`
@@ -217,6 +233,65 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
     }
   }
 
+  public async getAllListItemsCarroseInterno(): Promise<
+    NoticiasCarroselInterno
+  > {
+    try {
+      const w = Web(this.properties.SiteUrl);
+      let quantidade = this.properties.QtdItens;
+      const rowLimit = `<RowLimit>${quantidade}</RowLimit>`;
+      const queryOptions = `<QueryOptions><ViewAttributes Scope='RecursiveAll'/></QueryOptions>`;
+      const camlQuery = this.properties.Caml;
+      const r = await w.lists.getByTitle("Pages").getItemsByCAMLQuery(
+        {
+          ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`
+        },
+        "FieldValuesAsText",
+        "EncodedAbsUrl"
+      );
+
+      let itemNoticiasCarrosel: PublishingPage[] = [];
+
+      // look through the returned items.
+      let CountBox1 = 0;
+      for (var i = 0; i < r.length; i++) {
+        let iconUrl = null;
+
+        const matches = /SANDestaquePub:SW\|(.*?)\r\n/gi.exec(
+          r[i].FieldValuesAsText.MetaInfo
+        );
+        if (matches !== null && matches.length > 1) {
+          // this wil be the value of the PublishingPageImage field
+          iconUrl = new SPFXutils().extractIMGUrl(matches[1], "noticias");
+        }
+        itemNoticiasCarrosel.push({
+          Id: r[i].ID,
+          Title: r[i].Title,
+          Created: r[i].Created,
+          CreatedBy: null,
+          SANSinopse1: r[i].SANSinopse1,
+          SANAreas: r[i].SANAreas,
+          SANAtivo: r[i].SANAtivo,
+          SANCategorias: r[i].SANCategorias,
+          SANDestaqueHome: r[i].SANDestaqueHome,
+          SANOrdem1: r[i].SANOrdem1,
+          SANResponsavel: null,
+          SANSubTitulo1: r[i].SANSubTitulo1,
+          SANFullHtml: r[i].SANSinopse1,
+          SANDataVigencia: r[i].SANDataVigencia,
+          SANDestaquePub: iconUrl,
+          SANDestaqueCarrosel: iconUrl + "?RenditionID=13",
+          SANDestaqueCarrosel2: iconUrl + "?RenditionID=13",
+          link: r[i].EncodedAbsUrl
+        });
+      }
+      this._NoticiasContentInterno.Carrosel = itemNoticiasCarrosel;
+      return this._NoticiasContentInterno;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   protected get dataVersion(): Version {
     return Version.parse("1.0");
   }
@@ -253,8 +328,8 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
                   label: strings.LayoutLabel,
                   options: [
                     {
-                      key: "Full",
-                      text: "Full Banner",
+                      key: "interno",
+                      text: "Carousel Interno",
                       imageSrc:
                         "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
                       imageSize: {
@@ -266,7 +341,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
                     },
                     {
                       key: "2colunas",
-                      text: "2 Columns",
+                      text: "Carousel Home - 2 colunas",
                       imageSrc:
                         "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
                       imageSize: {
@@ -280,9 +355,12 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
                 }),
                 PropertyPaneSlider("QtdItens", {
                   label: strings.QtdItensLabel,
-                  min: 5,
+                  min: 3,
                   max: 12,
                   showValue: true
+                }),
+                PropertyPaneTextField("Caml", {
+                  label: strings.CamlLabel
                 })
               ]
             }

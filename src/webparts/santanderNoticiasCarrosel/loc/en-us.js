@@ -7,7 +7,8 @@ define([], function () {
     "SiteUrlLabel": "Site Url:",
     "ListNameLabel": "List Name:",
     "QtdItensLabel": "Qtd Itens: ",
-    "ReadMoreLabel": "Read More;",
+    "ReadMoreLabel": "Read More",
     "ReadMoreOnLabel": "Show Read More",
+    "CamlLabel": "CamlQuery"
   }
 });
