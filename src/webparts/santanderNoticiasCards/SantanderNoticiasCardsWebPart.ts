@@ -97,7 +97,6 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
 
   public async getAllNoticias(): Promise<PublishingPage[]> {
     try {
-      console.log(this.properties.Caml);
       const w = Web(this.properties.SiteUrl);
       let quantidade = this.properties.QtdItens;
       const rowLimit = `<RowLimit>${quantidade}</RowLimit>`;
@@ -145,7 +144,6 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
         });
       }
       this._Noticias = itemNoticias;
-      console.log("ret", this._Noticias);
       return this._Noticias;
     } catch (e) {
       console.error(e);
