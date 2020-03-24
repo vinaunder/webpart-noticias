@@ -8,6 +8,9 @@ declare interface ISantanderNoticiasCardsWebPartStrings {
   QtdItensLabel: string;
   FiltroLabel: string;
   FiltroOnLabel: string;
+  CamlLabel: string;
+  CamlDescription: string;
+  Titulo: string;
 }
 
 declare module "SantanderNoticiasCardsWebPartStrings" {

@@ -32,7 +32,8 @@
       "ListName": "Pages",
       "QtdItens": 6,
       "Filtro": "Filtro",
-      "FiltroOn": true
+      "FiltroOn": true,
+      "Titulo": "Noticias Destaque",
     }
   }]
 }

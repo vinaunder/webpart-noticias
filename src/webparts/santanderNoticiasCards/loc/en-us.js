@@ -9,5 +9,8 @@ define([], function () {
     "QtdItensLabel": "Qtd Itens por pagina: ",
     "FiltroLabel": "Filtro;",
     "FiltroOnLabel": "Mostrar Filtro",
+    "CamlDescription": "CamlQuery",
+    "CamlLabel": "CamlQuery",
+    "Titulo": "Noticias Destaque"
   }
 });

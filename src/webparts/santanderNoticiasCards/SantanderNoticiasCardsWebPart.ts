@@ -19,6 +19,8 @@ export interface ISantanderNoticiasCardsWebPartProps {
   QtdItens: number;
   Filtro: string;
   Filtroon: boolean;
+  Caml: string;
+  Titulo: string;
 }
 import {
   PublishingPage,
@@ -44,6 +46,7 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
       cards.qtditens = this.properties.QtdItens;
       cards.filtro = this.properties.Filtro;
       cards.showfiltro = this.properties.Filtroon;
+      cards.titulo = this.properties.Titulo;
       this.domElement.innerHTML = "";
       this.domElement.appendChild(cards);
     });
@@ -94,11 +97,12 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
 
   public async getAllNoticias(): Promise<PublishingPage[]> {
     try {
+      console.log(this.properties.Caml);
       const w = Web(this.properties.SiteUrl);
       let quantidade = this.properties.QtdItens;
       const rowLimit = `<RowLimit>${quantidade}</RowLimit>`;
       const queryOptions = `<QueryOptions><ViewAttributes Scope='RecursiveAll'/></QueryOptions>`;
-      const camlQuery = `<Query><Where><Neq><FieldRef Name='Title' /><Value Type='Text'>Notícias</Value></Neq></Where><OrderBy><FieldRef Name='Created' Ascending='False' /></OrderBy></Query>`;
+      const camlQuery = `${this.properties.Caml}`;
       const r = await w.lists.getByTitle("Pages").getItemsByCAMLQuery(
         {
           //ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`
@@ -109,17 +113,13 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
       );
 
       let itemNoticias: PublishingPage[] = [];
-
-      // look through the returned items.
       let CountBox1 = 0;
       for (var i = 0; i < r.length; i++) {
         let iconUrl = null;
-
         const matches = /SANDestaquePub:SW\|(.*?)\r\n/gi.exec(
           r[i].FieldValuesAsText.MetaInfo
         );
         if (matches !== null && matches.length > 1) {
-          // this wil be the value of the PublishingPageImage field
           iconUrl = new SPFXutils().extractIMGUrl(matches[1], "noticias");
         }
 
@@ -145,6 +145,7 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
         });
       }
       this._Noticias = itemNoticias;
+      console.log("ret", this._Noticias);
       return this._Noticias;
     } catch (e) {
       console.error(e);
@@ -177,6 +178,9 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
             {
               groupName: strings.LayoutGroupName,
               groupFields: [
+                PropertyPaneTextField("Titulo", {
+                  label: strings.Titulo
+                }),
                 PropertyPaneTextField("Filtro", {
                   label: strings.FiltroLabel
                 }),
@@ -188,6 +192,14 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
                   min: 3,
                   max: 12,
                   showValue: true
+                })
+              ]
+            },
+            {
+              groupName: strings.CamlDescription,
+              groupFields: [
+                PropertyPaneTextField("Caml", {
+                  label: strings.CamlLabel
                 })
               ]
             }
