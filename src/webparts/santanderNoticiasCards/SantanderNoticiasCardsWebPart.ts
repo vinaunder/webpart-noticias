@@ -47,10 +47,12 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
       cards.filtro = this.properties.Filtro;
       cards.showfiltro = this.properties.Filtroon;
       cards.titulo = this.properties.Titulo;
+      cards.categorias = this.itemCategoria;
       this.domElement.innerHTML = "";
       this.domElement.appendChild(cards);
     });
   }
+  public itemCategoria: string[] = [];
 
   public _Noticias: PublishingPage[] = [
     {
@@ -112,6 +114,7 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
       );
 
       let itemNoticias: PublishingPage[] = [];
+
       let CountBox1 = 0;
       for (var i = 0; i < r.length; i++) {
         let iconUrl = null;
@@ -142,6 +145,7 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
           SANDestaqueCarrosel2: iconUrl + "?RenditionID=11",
           link: r[i].EncodedAbsUrl
         });
+        this.itemCategoria.push(r[i].SANCategorias);
       }
       this._Noticias = itemNoticias;
       return this._Noticias;
