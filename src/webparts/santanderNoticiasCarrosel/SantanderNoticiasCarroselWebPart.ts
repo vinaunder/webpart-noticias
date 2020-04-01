@@ -10,6 +10,7 @@ import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 import { escape } from "@microsoft/sp-lodash-subset";
 
 import styles from "./SantanderNoticiasCarroselWebPart.module.scss";
+
 import { sp } from "@pnp/sp";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
