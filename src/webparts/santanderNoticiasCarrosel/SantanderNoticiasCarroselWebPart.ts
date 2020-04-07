@@ -4,7 +4,7 @@ import {
   PropertyPaneTextField,
   PropertyPaneToggle,
   PropertyPaneSlider,
-  PropertyPaneChoiceGroup
+  PropertyPaneChoiceGroup,
 } from "@microsoft/sp-property-pane";
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 import { escape } from "@microsoft/sp-lodash-subset";
@@ -21,7 +21,7 @@ import * as strings from "SantanderNoticiasCarroselWebPartStrings";
 import {
   PublishingPage,
   NoticiasCarrosel,
-  NoticiasCarroselInterno
+  NoticiasCarroselInterno,
 } from "./../../interfaces/appLists.interface";
 import { SPFXutils } from "./../../services/util.service";
 
@@ -84,7 +84,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
       SANCategorias: ["Riscos", "Segurança", "CyberDefesa"],
       SANDestaqueCarrosel: "iconUrl",
       SANDestaqueCarrosel2: "iconUrl",
-      link: "url"
+      link: "url",
     },
     {
       Id: 1,
@@ -104,17 +104,17 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
       SANCategorias: ["Riscos", "Segurança", "CyberDefesa"],
       SANDestaqueCarrosel: "iconUrl",
       SANDestaqueCarrosel2: "iconUrl",
-      link: "url"
-    }
+      link: "url",
+    },
   ];
   public _NoticiasContent: NoticiasCarrosel = {
     Carrosel: this._Noticias,
     Box1: this._Noticias[0],
-    Box2: this._Noticias[1]
+    Box2: this._Noticias[1],
   };
 
   public _NoticiasContentInterno: NoticiasCarroselInterno = {
-    Carrosel: this._Noticias
+    Carrosel: this._Noticias,
   };
 
   public async getAllListItemsCarrosel(): Promise<NoticiasCarrosel> {
@@ -126,7 +126,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
       const camlQuery = this.properties.Caml;
       const r = await w.lists.getByTitle("Pages").getItemsByCAMLQuery(
         {
-          ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`
+          ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`,
         },
         "FieldValuesAsText",
         "EncodedAbsUrl"
@@ -142,7 +142,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
       let ItemNoticiaBox2: PublishingPage;
 
       // look through the returned items.
-      let CountBox1 = 0;
+      let CountBox1 = 1;
       for (var i = 0; i < r.length; i++) {
         let iconUrl = null;
 
@@ -172,13 +172,10 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             SANDestaquePub: iconUrl,
             SANDestaqueCarrosel: iconUrl + "?RenditionID=5",
             SANDestaqueCarrosel2: iconUrl + "?RenditionID=7",
-            link: r[i].EncodedAbsUrl
+            link: r[i].EncodedAbsUrl,
           });
-          if (i == quantidadeCarrosel - 1) {
-            CountBox1++;
-          }
         }
-        if (CountBox1 == 1) {
+        if (CountBox1 == 4) {
           ItemNoticiaBox1 = {
             Id: r[i].ID,
             Title: r[i].Title,
@@ -187,7 +184,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             SANSinopse1: r[i].SANSinopse1,
             SANAreas: r[i].SANAreas,
             SANAtivo: r[i].SANAtivo,
-            SANCategorias: ["Categoria"], //r[i].SANCategoriasd,
+            SANCategorias: r[i].SANCategorias,
             SANDestaqueHome: r[i].SANDestaqueHome,
             SANOrdem1: r[i].SANOrdem1,
             SANResponsavel: null,
@@ -197,10 +194,10 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             SANDestaquePub: iconUrl,
             SANDestaqueCarrosel: iconUrl + "?RenditionID=5",
             SANDestaqueCarrosel2: iconUrl + "?RenditionID=6",
-            link: r[i].EncodedAbsUrl
+            link: r[i].EncodedAbsUrl,
           };
         }
-        if (CountBox1 == 2) {
+        if (CountBox1 == 5) {
           ItemNoticiaBox2 = {
             Id: r[i].ID,
             Title: r[i].Title,
@@ -209,7 +206,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             SANSinopse1: r[i].SANSinopse1,
             SANAreas: r[i].SANAreas,
             SANAtivo: r[i].SANAtivo,
-            SANCategorias: ["Categoria"], //r[i].SANCategoriasd,
+            SANCategorias: r[i].SANCategorias,
             SANDestaqueHome: r[i].SANDestaqueHome,
             SANOrdem1: r[i].SANOrdem1,
             SANResponsavel: null,
@@ -219,11 +216,10 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             SANDestaquePub: iconUrl,
             SANDestaqueCarrosel: iconUrl + "?RenditionID=5",
             SANDestaqueCarrosel2: iconUrl + "?RenditionID=6",
-            link: r[i].EncodedAbsUrl
+            link: r[i].EncodedAbsUrl,
           };
-          CountBox1++;
         }
-        if (CountBox1 == 1) CountBox1++;
+        CountBox1++;
       }
       this._NoticiasContent.Carrosel = itemNoticiasCarrosel;
       this._NoticiasContent.Box1 = ItemNoticiaBox1;
@@ -245,7 +241,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
       const camlQuery = this.properties.Caml;
       const r = await w.lists.getByTitle("Pages").getItemsByCAMLQuery(
         {
-          ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`
+          ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`,
         },
         "FieldValuesAsText",
         "EncodedAbsUrl"
@@ -283,7 +279,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
           SANDestaquePub: iconUrl,
           SANDestaqueCarrosel: iconUrl + "?RenditionID=13",
           SANDestaqueCarrosel2: iconUrl + "?RenditionID=13",
-          link: r[i].EncodedAbsUrl
+          link: r[i].EncodedAbsUrl,
         });
       }
       this._NoticiasContentInterno.Carrosel = itemNoticiasCarrosel;
@@ -302,28 +298,28 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
       pages: [
         {
           header: {
-            description: strings.PropertyPaneDescription
+            description: strings.PropertyPaneDescription,
           },
           groups: [
             {
               groupName: strings.BasicGroupName,
               groupFields: [
                 PropertyPaneTextField("SiteUrl", {
-                  label: strings.SiteUrlLabel
+                  label: strings.SiteUrlLabel,
                 }),
                 PropertyPaneTextField("ListName", {
-                  label: strings.ListNameLabel
-                })
-              ]
+                  label: strings.ListNameLabel,
+                }),
+              ],
             },
             {
               groupName: strings.LayoutGroupName,
               groupFields: [
                 PropertyPaneTextField("ReadMore", {
-                  label: strings.ReadMoreLabel
+                  label: strings.ReadMoreLabel,
                 }),
                 PropertyPaneToggle("ReadMoreOn", {
-                  label: strings.ReadMoreOnLabel
+                  label: strings.ReadMoreOnLabel,
                 }),
                 PropertyPaneChoiceGroup("Layout", {
                   label: strings.LayoutLabel,
@@ -335,10 +331,10 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
                         "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
                       imageSize: {
                         width: 32,
-                        height: 32
+                        height: 32,
                       },
                       selectedImageSrc:
-                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png"
+                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
                     },
                     {
                       key: "2colunas",
@@ -347,27 +343,27 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
                         "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
                       imageSize: {
                         width: 32,
-                        height: 32
+                        height: 32,
                       },
                       selectedImageSrc:
-                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png"
-                    }
-                  ]
+                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
+                    },
+                  ],
                 }),
                 PropertyPaneSlider("QtdItens", {
                   label: strings.QtdItensLabel,
                   min: 3,
                   max: 12,
-                  showValue: true
+                  showValue: true,
                 }),
                 PropertyPaneTextField("Caml", {
-                  label: strings.CamlLabel
-                })
-              ]
-            }
-          ]
-        }
-      ]
+                  label: strings.CamlLabel,
+                }),
+              ],
+            },
+          ],
+        },
+      ],
     };
   }
 }
