@@ -41,19 +41,23 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
   public render(): void {
     if (this.properties.Layout == "area") {
       this.getAllListItemsArea().then((ret: NoticiasHome): void => {
-        this.NoticiasHome = ret;
-        const home: any = document.createElement("snt-noticias-home");
-        home.datasource = this.NoticiasHome;
-        this.domElement.innerHTML = "";
-        this.domElement.appendChild(home);
+        if (ret.Box1.length > 0) {
+          this.NoticiasHome = ret;
+          const home: any = document.createElement("snt-noticias-home");
+          home.datasource = this.NoticiasHome;
+          this.domElement.innerHTML = "";
+          this.domElement.appendChild(home);
+        }
       });
     } else {
       this.getAllListItemsLarge().then((ret: NoticiasHome): void => {
-        this.NoticiasHome = ret;
-        const home: any = document.createElement("snt-noticias-home");
-        home.datasource = this.NoticiasHome;
-        this.domElement.innerHTML = "";
-        this.domElement.appendChild(home);
+        if (ret.Box1.length > 0) {
+          this.NoticiasHome = ret;
+          const home: any = document.createElement("snt-noticias-home");
+          home.datasource = this.NoticiasHome;
+          this.domElement.innerHTML = "";
+          this.domElement.appendChild(home);
+        }
       });
     }
   }

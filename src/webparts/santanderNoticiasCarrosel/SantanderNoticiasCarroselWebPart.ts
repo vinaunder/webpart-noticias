@@ -55,11 +55,15 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
     } else if (this.properties.Layout == "interno") {
       this.getAllListItemsCarroseInterno().then(
         (ret: NoticiasCarroselInterno): void => {
-          this.NoticiasCarroselInterno = ret;
-          const carousel: any = document.createElement("snt-carousel-interno");
-          carousel.datasource = this.NoticiasCarroselInterno;
-          this.domElement.innerHTML = "";
-          this.domElement.appendChild(carousel);
+          if (ret.Carrosel.length > 0) {
+            this.NoticiasCarroselInterno = ret;
+            const carousel: any = document.createElement(
+              "snt-carousel-interno"
+            );
+            carousel.datasource = this.NoticiasCarroselInterno;
+            this.domElement.innerHTML = "";
+            this.domElement.appendChild(carousel);
+          }
         }
       );
     }
