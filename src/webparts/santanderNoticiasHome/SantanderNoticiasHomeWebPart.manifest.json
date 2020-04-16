@@ -30,7 +30,9 @@
       "description": "wpCarroselNoticias",
       "SiteUrl": "/noticias",
       "ListName": "Pages",
-      "QtdItens": 3
+      "QtdItens": 3,
+      "Layout": "large",
+      "Caml": "<Query><Where><And><Eq><FieldRef Name='SANDestaqueHome' /><Value Type='Boolean'>1</Value></Eq><Eq><FieldRef Name='SANAtivo' /><Value Type='Boolean'>1</Value></Eq></And></Where><OrderBy><FieldRef Name='SANOrdem1' Ascending='True' /></OrderBy></Query>"
     }
   }]
 }

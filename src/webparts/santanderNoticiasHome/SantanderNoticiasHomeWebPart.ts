@@ -4,7 +4,7 @@ import {
   PropertyPaneTextField,
   PropertyPaneToggle,
   PropertyPaneSlider,
-  PropertyPaneChoiceGroup
+  PropertyPaneChoiceGroup,
 } from "@microsoft/sp-property-pane";
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 import { escape } from "@microsoft/sp-lodash-subset";
@@ -14,7 +14,7 @@ import * as strings from "SantanderNoticiasHomeWebPartStrings";
 
 import {
   PublishingPage,
-  NoticiasHome
+  NoticiasHome,
 } from "./../../interfaces/appLists.interface";
 
 import { SPFXutils } from "./../../services/util.service";
@@ -30,6 +30,8 @@ export interface ISantanderNoticiasHomeWebPartProps {
   SiteUrl: string;
   ListName: string;
   QtdItens: number;
+  Layout: string;
+  Caml: string;
 }
 
 export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
@@ -37,13 +39,23 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
 > {
   public NoticiasHome: NoticiasHome;
   public render(): void {
-    this.getAllListItemsCarrosel().then((ret: NoticiasHome): void => {
-      this.NoticiasHome = ret;
-      const home: any = document.createElement("snt-noticias-home");
-      home.datasource = this.NoticiasHome;
-      this.domElement.innerHTML = "";
-      this.domElement.appendChild(home);
-    });
+    if (this.properties.Layout == "area") {
+      this.getAllListItemsArea().then((ret: NoticiasHome): void => {
+        this.NoticiasHome = ret;
+        const home: any = document.createElement("snt-noticias-home");
+        home.datasource = this.NoticiasHome;
+        this.domElement.innerHTML = "";
+        this.domElement.appendChild(home);
+      });
+    } else {
+      this.getAllListItemsLarge().then((ret: NoticiasHome): void => {
+        this.NoticiasHome = ret;
+        const home: any = document.createElement("snt-noticias-home");
+        home.datasource = this.NoticiasHome;
+        this.domElement.innerHTML = "";
+        this.domElement.appendChild(home);
+      });
+    }
   }
 
   public _Noticias: PublishingPage[] = [
@@ -65,7 +77,7 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
       SANCategorias: ["Riscos", "Segurança", "CyberDefesa"],
       SANDestaqueCarrosel: "iconUrl",
       SANDestaqueCarrosel2: "iconUrl",
-      link: "url"
+      link: "url",
     },
     {
       Id: 1,
@@ -85,24 +97,24 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
       SANCategorias: ["Riscos", "Segurança", "CyberDefesa"],
       SANDestaqueCarrosel: "iconUrl",
       SANDestaqueCarrosel2: "iconUrl",
-      link: "url"
-    }
+      link: "url",
+    },
   ];
   public _NoticiasContent: NoticiasHome = {
     Box1: this._Noticias,
-    Box2: this._Noticias[1]
+    Box2: this._Noticias[1],
   };
 
-  public async getAllListItemsCarrosel(): Promise<NoticiasHome> {
+  public async getAllListItemsLarge(): Promise<NoticiasHome> {
     try {
       const w = Web(this.properties.SiteUrl);
       let quantidade = this.properties.QtdItens;
       const rowLimit = `<RowLimit>${quantidade}</RowLimit>`;
       const queryOptions = `<QueryOptions><ViewAttributes Scope='RecursiveAll'/></QueryOptions>`;
-      const camlQuery = `<Query><Where><And><Eq><FieldRef Name='SANDestaqueHome' /><Value Type='Boolean'>1</Value></Eq><Eq><FieldRef Name='SANAtivo' /><Value Type='Boolean'>1</Value></Eq></And></Where><OrderBy><FieldRef Name='SANOrdem1' Ascending='True' /></OrderBy></Query>`;
+      const camlQuery = this.properties.Caml;
       const r = await w.lists.getByTitle("Pages").getItemsByCAMLQuery(
         {
-          ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`
+          ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`,
         },
         "FieldValuesAsText",
         "EncodedAbsUrl"
@@ -139,7 +151,7 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
             SANDestaquePub: iconUrl,
             SANDestaqueCarrosel: iconUrl + "?RenditionID=7",
             SANDestaqueCarrosel2: iconUrl + "?RenditionID=11",
-            link: r[i].EncodedAbsUrl
+            link: r[i].EncodedAbsUrl,
           });
           if (i == quantidadeCarrosel - 1) {
             CountBox1++;
@@ -164,9 +176,64 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
             SANDestaquePub: iconUrl,
             SANDestaqueCarrosel: iconUrl + "?RenditionID=7",
             SANDestaqueCarrosel2: iconUrl + "?RenditionID=11",
-            link: r[i].EncodedAbsUrl
+            link: r[i].EncodedAbsUrl,
           };
         }
+      }
+      this._NoticiasContent.Box1 = itemBox1;
+      this._NoticiasContent.Box2 = itemBox2;
+      return this._NoticiasContent;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  public async getAllListItemsArea(): Promise<NoticiasHome> {
+    try {
+      const w = Web(this.properties.SiteUrl);
+      let quantidade = this.properties.QtdItens;
+      const rowLimit = `<RowLimit>${quantidade}</RowLimit>`;
+      const queryOptions = `<QueryOptions><ViewAttributes Scope='RecursiveAll'/></QueryOptions>`;
+      const camlQuery = this.properties.Caml;
+      const r = await w.lists.getByTitle("Pages").getItemsByCAMLQuery(
+        {
+          ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`,
+        },
+        "FieldValuesAsText",
+        "EncodedAbsUrl"
+      );
+      var itemBox1: PublishingPage[] = [];
+      var itemBox2: PublishingPage;
+      let CountBox1 = 0;
+      for (var i = 0; i < r.length; i++) {
+        let iconUrl = null;
+        const matches = /SANDestaquePub:SW\|(.*?)\r\n/gi.exec(
+          r[i].FieldValuesAsText.MetaInfo
+        );
+        if (matches !== null && matches.length > 1) {
+          // this wil be the value of the PublishingPageImage field
+          iconUrl = new SPFXutils().extractIMGUrl(matches[1], "noticias");
+        }
+        itemBox1.push({
+          Id: r[i].ID,
+          Title: r[i].Title,
+          Created: r[i].Created,
+          CreatedBy: null,
+          SANSinopse1: r[i].SANSinopse1,
+          SANAreas: r[i].SANAreas,
+          SANAtivo: r[i].SANAtivo,
+          SANCategorias: r[i].SANCategorias,
+          SANDestaqueHome: r[i].SANDestaqueHome,
+          SANOrdem1: r[i].SANOrdem1,
+          SANResponsavel: null,
+          SANSubTitulo1: r[i].SANSubTitulo1,
+          SANFullHtml: r[i].SANSinopse1,
+          SANDataVigencia: r[i].SANDataVigencia,
+          SANDestaquePub: iconUrl,
+          SANDestaqueCarrosel: iconUrl + "?RenditionID=7",
+          SANDestaqueCarrosel2: iconUrl + "?RenditionID=11",
+          link: r[i].EncodedAbsUrl,
+        });
       }
       this._NoticiasContent.Box1 = itemBox1;
       this._NoticiasContent.Box2 = itemBox2;
@@ -185,19 +252,19 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
       pages: [
         {
           header: {
-            description: strings.PropertyPaneDescription
+            description: strings.PropertyPaneDescription,
           },
           groups: [
             {
               groupName: strings.BasicGroupName,
               groupFields: [
                 PropertyPaneTextField("SiteUrl", {
-                  label: strings.SiteUrlLabel
+                  label: strings.SiteUrlLabel,
                 }),
                 PropertyPaneTextField("ListName", {
-                  label: strings.ListNameLabel
-                })
-              ]
+                  label: strings.ListNameLabel,
+                }),
+              ],
             },
             {
               groupName: strings.LayoutGroupName,
@@ -206,13 +273,45 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
                   label: strings.QtdItensLabel,
                   min: 1,
                   max: 3,
-                  showValue: true
-                })
-              ]
-            }
-          ]
-        }
-      ]
+                  showValue: true,
+                }),
+                PropertyPaneChoiceGroup("Layout", {
+                  label: strings.LayoutLabel,
+                  options: [
+                    {
+                      key: "area",
+                      text: "Noticias",
+                      imageSrc:
+                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
+                      imageSize: {
+                        width: 32,
+                        height: 32,
+                      },
+                      selectedImageSrc:
+                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
+                    },
+                    {
+                      key: "large",
+                      text: "Noticias Large",
+                      imageSrc:
+                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
+                      imageSize: {
+                        width: 32,
+                        height: 32,
+                      },
+                      selectedImageSrc:
+                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
+                    },
+                  ],
+                }),
+                PropertyPaneTextField("Caml", {
+                  label: strings.CamlLabel,
+                }),
+              ],
+            },
+          ],
+        },
+      ],
     };
   }
 }

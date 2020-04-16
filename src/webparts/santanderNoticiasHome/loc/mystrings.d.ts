@@ -9,6 +9,7 @@ declare interface ISantanderNoticiasHomeWebPartStrings {
   ReadMoreLabel: string;
   ReadMoreOnLabel: string;
   LayoutLabel: string;
+  CamlLabel: string;
 }
 
 declare module "SantanderNoticiasHomeWebPartStrings" {

@@ -4,7 +4,7 @@ import {
   PropertyPaneTextField,
   PropertyPaneToggle,
   PropertyPaneSlider,
-  PropertyPaneChoiceGroup
+  PropertyPaneChoiceGroup,
 } from "@microsoft/sp-property-pane";
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 import { escape } from "@microsoft/sp-lodash-subset";
@@ -24,7 +24,7 @@ export interface ISantanderNoticiasCardsWebPartProps {
 }
 import {
   PublishingPage,
-  NoticiasHome
+  NoticiasHome,
 } from "./../../interfaces/appLists.interface";
 
 import { SPFXutils } from "./../../services/util.service";
@@ -73,7 +73,7 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
       SANCategorias: ["Riscos", "Segurança", "CyberDefesa"],
       SANDestaqueCarrosel: "iconUrl",
       SANDestaqueCarrosel2: "iconUrl",
-      link: "url"
+      link: "url",
     },
     {
       Id: 1,
@@ -93,8 +93,8 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
       SANCategorias: ["Riscos", "Segurança", "CyberDefesa"],
       SANDestaqueCarrosel: "iconUrl",
       SANDestaqueCarrosel2: "iconUrl",
-      link: "url"
-    }
+      link: "url",
+    },
   ];
 
   public async getAllNoticias(): Promise<PublishingPage[]> {
@@ -107,7 +107,7 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
       const r = await w.lists.getByTitle("Pages").getItemsByCAMLQuery(
         {
           //ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`
-          ViewXml: `<View>${camlQuery}${queryOptions}</View>`
+          ViewXml: `<View>${camlQuery}${queryOptions}</View>`,
         },
         "FieldValuesAsText",
         "EncodedAbsUrl"
@@ -143,7 +143,7 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
           SANDestaquePub: iconUrl,
           SANDestaqueCarrosel: iconUrl + "?RenditionID=7",
           SANDestaqueCarrosel2: iconUrl + "?RenditionID=11",
-          link: r[i].EncodedAbsUrl
+          link: r[i].EncodedAbsUrl,
         });
         this.itemCategoria.push(r[i].SANCategorias);
       }
@@ -163,51 +163,51 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
       pages: [
         {
           header: {
-            description: strings.PropertyPaneDescription
+            description: strings.PropertyPaneDescription,
           },
           groups: [
             {
               groupName: strings.BasicGroupName,
               groupFields: [
                 PropertyPaneTextField("SiteUrl", {
-                  label: strings.SiteUrlLabel
+                  label: strings.SiteUrlLabel,
                 }),
                 PropertyPaneTextField("ListName", {
-                  label: strings.ListNameLabel
-                })
-              ]
+                  label: strings.ListNameLabel,
+                }),
+              ],
             },
             {
               groupName: strings.LayoutGroupName,
               groupFields: [
                 PropertyPaneTextField("Titulo", {
-                  label: strings.Titulo
+                  label: strings.Titulo,
                 }),
                 PropertyPaneTextField("Filtro", {
-                  label: strings.FiltroLabel
+                  label: strings.FiltroLabel,
                 }),
                 PropertyPaneToggle("Filtroon", {
-                  label: strings.FiltroOnLabel
+                  label: strings.FiltroOnLabel,
                 }),
                 PropertyPaneSlider("QtdItens", {
                   label: strings.QtdItensLabel,
                   min: 3,
                   max: 12,
-                  showValue: true
-                })
-              ]
+                  showValue: true,
+                }),
+              ],
             },
             {
               groupName: strings.CamlDescription,
               groupFields: [
                 PropertyPaneTextField("Caml", {
-                  label: strings.CamlLabel
-                })
-              ]
-            }
-          ]
-        }
-      ]
+                  label: strings.CamlLabel,
+                }),
+              ],
+            },
+          ],
+        },
+      ],
     };
   }
 }

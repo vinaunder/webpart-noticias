@@ -9,5 +9,6 @@ define([], function () {
     "QtdItensLabel": "Qtd Itens: ",
     "ReadMoreLabel": "Read More;",
     "ReadMoreOnLabel": "Show Read More",
+    "CamlLabel": "CamlQuery"
   }
 });
