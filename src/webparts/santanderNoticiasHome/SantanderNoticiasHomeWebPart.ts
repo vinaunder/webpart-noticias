@@ -45,6 +45,7 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
           this.NoticiasHome = ret;
           const home: any = document.createElement("snt-noticias-home");
           home.datasource = this.NoticiasHome;
+          home.tipo = "news-content-area";
           this.domElement.innerHTML = "";
           this.domElement.appendChild(home);
         }
@@ -55,6 +56,7 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
           this.NoticiasHome = ret;
           const home: any = document.createElement("snt-noticias-home");
           home.datasource = this.NoticiasHome;
+          home.tipo = "news-content";
           this.domElement.innerHTML = "";
           this.domElement.appendChild(home);
         }
