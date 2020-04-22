@@ -228,11 +228,68 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
       this._NoticiasContent.Carrosel = itemNoticiasCarrosel;
       this._NoticiasContent.Box1 = ItemNoticiaBox1;
       this._NoticiasContent.Box2 = ItemNoticiaBox2;
+
+      //verifica se tem noticias
+      if (this._NoticiasContent.Box1 === undefined) {
+        this._NoticiasContent.Box1 = this._Noticias[0];
+      }
+      if (this._NoticiasContent.Box2 === undefined) {
+        this._NoticiasContent.Box2 = this._Noticias[0];
+      }
+
       return this._NoticiasContent;
     } catch (e) {
       console.error(e);
     }
   }
+
+  // public getLastNews(): Promise<PublishingPage> {
+  //   const w = Web(this.properties.SiteUrl);
+  //   const rowLimit = `<RowLimit>1</RowLimit>`;
+  //   const queryOptions = `<QueryOptions><ViewAttributes Scope='RecursiveAll'/></QueryOptions>`;
+  //   const camlQuery = `<Query><Where><Eq><FieldRef Name='SANDestaquePrincipal' /><Value Type='Boolean'>0</Value></Eq></Where><OrderBy><FieldRef Name='Created' Ascending='True' /></OrderBy></Query>`;
+  //   const r = w.lists.getByTitle("Pages").getItemsByCAMLQuery(
+  //     {
+  //       ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`,
+  //     },
+  //     "FieldValuesAsText",
+  //     "EncodedAbsUrl"
+  //   );
+  //   let ItemNoticiaBox1: PublishingPage;
+  //   console.log("retorno ->", r);
+  //   // for (var i = 0; i < r.Rows.length; i++) {
+  //   //   let iconUrl = null;
+
+  //   //   const matches = /SANDestaquePub:SW\|(.*?)\r\n/gi.exec(
+  //   //     r[i].FieldValuesAsText.MetaInfo
+  //   //   );
+  //   //   if (matches !== null && matches.length > 1) {
+  //   //     // this wil be the value of the PublishingPageImage field
+  //   //     iconUrl = new SPFXutils().extractIMGUrl(matches[1], "noticias");
+  //   //   }
+  //   //   ItemNoticiaBox1 = {
+  //   //     Id: r[i].ID,
+  //   //     Title: r[i].Title,
+  //   //     Created: r[i].Created,
+  //   //     CreatedBy: null,
+  //   //     SANSinopse1: r[i].SANSinopse1,
+  //   //     SANAreas: r[i].SANAreas,
+  //   //     SANAtivo: r[i].SANAtivo,
+  //   //     SANCategorias: r[i].SANCategorias,
+  //   //     SANDestaqueHome: r[i].SANDestaqueHome,
+  //   //     SANOrdem1: r[i].SANOrdem1,
+  //   //     SANResponsavel: null,
+  //   //     SANSubTitulo1: r[i].SANSubTitulo1,
+  //   //     SANFullHtml: r[i].SANSinopse1,
+  //   //     SANDataVigencia: r[i].SANDataVigencia,
+  //   //     SANDestaquePub: iconUrl,
+  //   //     SANDestaqueCarrosel: iconUrl + "?RenditionID=5",
+  //   //     SANDestaqueCarrosel2: iconUrl + "?RenditionID=6",
+  //   //     link: r[i].EncodedAbsUrl,
+  //   //   };
+  //   // }
+  //   return ItemNoticiaBox1;
+  // }
 
   public async getAllListItemsCarroseInterno(): Promise<
     NoticiasCarroselInterno
