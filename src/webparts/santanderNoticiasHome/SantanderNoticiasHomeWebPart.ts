@@ -5,6 +5,7 @@ import {
   PropertyPaneToggle,
   PropertyPaneSlider,
   PropertyPaneChoiceGroup,
+  IPropertyPaneDropdownOption,
 } from "@microsoft/sp-property-pane";
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 import { escape } from "@microsoft/sp-lodash-subset";
@@ -19,6 +20,13 @@ import {
 
 import { SPFXutils } from "./../../services/util.service";
 
+import {
+  PropertyFieldTermPicker,
+  IPickerTerms,
+} from "@pnp/spfx-property-controls/lib/PropertyFieldTermPicker";
+
+import { PropertyFieldMultiSelect } from "@pnp/spfx-property-controls/lib/PropertyFieldMultiSelect";
+
 import { sp } from "@pnp/sp";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
@@ -32,11 +40,100 @@ export interface ISantanderNoticiasHomeWebPartProps {
   QtdItens: number;
   Layout: string;
   Caml: string;
+  multiSelect: string[];
+  Area: IPickerTerms;
 }
 
 export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
   ISantanderNoticiasHomeWebPartProps
 > {
+  public options: Array<IPropertyPaneDropdownOption> = new Array<
+    IPropertyPaneDropdownOption
+  >();
+
+  protected onPropertyPaneConfigurationStart(): void {
+    if (this.properties.SiteUrl) {
+      this.getAllNoticias();
+    }
+  }
+
+  protected onPropertyPaneFieldChanged(
+    propertyPath: string,
+    oldValue: any,
+    newValue: any
+  ): void {
+    if (propertyPath === "Area" && newValue) {
+      super.onPropertyPaneFieldChanged(propertyPath, oldValue, newValue);
+      this.options = new Array<IPropertyPaneDropdownOption>();
+      const w = Web(this.properties.SiteUrl);
+      const viewFields = `<ViewFields>
+    <FieldRef Name="Id"></FieldRef>
+    <FieldRef Name="Title"></FieldRef>
+  </ViewFields>`;
+      const queryOptions = `<QueryOptions><ViewAttributes Scope='RecursiveAll'/></QueryOptions>`;
+      let camlQuery = "";
+      if (this.properties.Area.length > 0) {
+        camlQuery =
+          `<Query><Where><And><Eq><FieldRef Name="SANAtivo" /><Value Type="Boolean">1</Value></Eq><Contains><FieldRef Name="SANAreas" /><Value Type="TaxonomyFieldTypeMulti">` +
+          this.properties.Area[0].name +
+          `</Value></Contains></And></Where><OrderBy><FieldRef Name="Title" Ascending="True" /></OrderBy></Query>`;
+      } else {
+        camlQuery = `<Query><Where><Eq><FieldRef Name="SANAtivo" /><Value Type="Boolean">1</Value></Eq></Where><OrderBy><FieldRef Name="Title" Ascending="True" /></OrderBy></Query>`;
+      }
+
+      w.lists
+        .getByTitle("Pages")
+        .getItemsByCAMLQuery(
+          {
+            ViewXml: `<View>${camlQuery}${queryOptions}${viewFields}</View>`,
+          },
+          "FieldValuesAsText",
+          "EncodedAbsUrl"
+        )
+        .then((itens) => {
+          itens.forEach((item) => {
+            this.options.push({ key: item.Id, text: item.Title });
+          });
+          this.context.propertyPane.refresh();
+        });
+    }
+  }
+
+  public async getAllNoticias() {
+    this.options = new Array<IPropertyPaneDropdownOption>();
+    const w = Web(this.properties.SiteUrl);
+    const viewFields = `<ViewFields>
+    <FieldRef Name="Id"></FieldRef>
+    <FieldRef Name="Title"></FieldRef>
+  </ViewFields>`;
+    const queryOptions = `<QueryOptions><ViewAttributes Scope='RecursiveAll'/></QueryOptions>`;
+    let camlQuery = "";
+    if (this.properties.Area.length > 0) {
+      camlQuery =
+        `<Query><Where><And><Eq><FieldRef Name="SANAtivo" /><Value Type="Boolean">1</Value></Eq><Contains><FieldRef Name="SANAreas" /><Value Type="TaxonomyFieldTypeMulti">` +
+        this.properties.Area[0].name +
+        `</Value></Contains></And></Where><OrderBy><FieldRef Name="Title" Ascending="True" /></OrderBy></Query>`;
+    } else {
+      camlQuery = `<Query><Where><Eq><FieldRef Name="SANAtivo" /><Value Type="Boolean">1</Value></Eq></Where><OrderBy><FieldRef Name="Title" Ascending="True" /></OrderBy></Query>`;
+    }
+
+    await w.lists
+      .getByTitle("Pages")
+      .getItemsByCAMLQuery(
+        {
+          ViewXml: `<View>${camlQuery}${queryOptions}${viewFields}</View>`,
+        },
+        "FieldValuesAsText",
+        "EncodedAbsUrl"
+      )
+      .then((itens) => {
+        itens.forEach((item) => {
+          this.options.push({ key: item.Id, text: item.Title });
+        });
+        this.context.propertyPane.refresh();
+      });
+  }
+
   public NoticiasHome: NoticiasHome;
   public render(): void {
     if (this.properties.Layout == "area") {
@@ -117,7 +214,14 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
       let quantidade = this.properties.QtdItens;
       const rowLimit = `<RowLimit>${quantidade}</RowLimit>`;
       const queryOptions = `<QueryOptions><ViewAttributes Scope='RecursiveAll'/></QueryOptions>`;
-      const camlQuery = this.properties.Caml;
+      // const camlQuery = this.properties.Caml;
+      var camlQuery = '<Query><Where><In><FieldRef Name="ID" /><Values>';
+
+      this.properties.multiSelect.forEach((item) => {
+        camlQuery += '<Value Type="Number">' + item + "</Value>";
+      });
+
+      camlQuery += "</Values></In></Where></Query>";
       const r = await w.lists.getByTitle("Pages").getItemsByCAMLQuery(
         {
           ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`,
@@ -200,7 +304,14 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
       let quantidade = this.properties.QtdItens;
       const rowLimit = `<RowLimit>${quantidade}</RowLimit>`;
       const queryOptions = `<QueryOptions><ViewAttributes Scope='RecursiveAll'/></QueryOptions>`;
-      const camlQuery = this.properties.Caml;
+      // const camlQuery = this.properties.Caml;
+      var camlQuery = '<Query><Where><In><FieldRef Name="ID" /><Values>';
+
+      this.properties.multiSelect.forEach((item) => {
+        camlQuery += '<Value Type="Number">' + item + "</Value>";
+      });
+
+      camlQuery += "</Values></In></Where></Query>";
       const r = await w.lists.getByTitle("Pages").getItemsByCAMLQuery(
         {
           ViewXml: `<View>${camlQuery}${queryOptions}${rowLimit}</View>`,
@@ -269,6 +380,28 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
                 }),
                 PropertyPaneTextField("ListName", {
                   label: strings.ListNameLabel,
+                }),
+                PropertyFieldTermPicker("Area", {
+                  label: "Selecione a Área",
+                  panelTitle: "Selecione a Área",
+                  initialValues: this.properties.Area,
+                  allowMultipleSelections: true,
+                  excludeSystemGroup: false,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  context: this.context,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  limitByGroupNameOrID:
+                    "Site Collection - santandernet.sharepoint.com-sites-IPPortugal",
+                  limitByTermsetNameOrID: "Areas",
+                  key: "termSetsPickerFieldId",
+                }),
+                PropertyFieldMultiSelect("multiSelect", {
+                  key: "multiSelect",
+                  label: "Destaques",
+                  options: this.options,
+                  selectedKeys: this.properties.multiSelect,
                 }),
               ],
             },
