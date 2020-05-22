@@ -390,8 +390,8 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
           Id: r[i].ID,
           Title: r[i].Title,
           Created: this.properties.isProduto
-            ? r[i].Created
-            : r[i].SANDataInicioComercializacao,
+            ? r[i].SANDataInicioComercializacao
+            : r[i].Created,
           CreatedBy: null,
           SANSinopse1: r[i].SANSinopse1,
           SANAreas: r[i].SANAreas,
