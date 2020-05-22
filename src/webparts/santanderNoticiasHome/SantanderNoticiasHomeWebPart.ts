@@ -42,6 +42,7 @@ export interface ISantanderNoticiasHomeWebPartProps {
   Caml: string;
   multiSelect: string[];
   Area: IPickerTerms;
+  Tipos: IPickerTerms;
 }
 
 export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
@@ -54,6 +55,49 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
   protected onPropertyPaneConfigurationStart(): void {
     if (this.properties.SiteUrl) {
       this.getAllNoticias();
+    }
+  }
+
+  protected onPropertyPaneFieldChanged2(
+    propertyPath: string,
+    oldValue: any,
+    newValue: any
+  ): void {
+    if (propertyPath === "Tipos" && newValue) {
+      super.onPropertyPaneFieldChanged(propertyPath, oldValue, newValue);
+      this.options = new Array<IPropertyPaneDropdownOption>();
+      const w = Web(this.properties.SiteUrl);
+      const viewFields = `<ViewFields>
+    <FieldRef Name="Id"></FieldRef>
+    <FieldRef Name="Title"></FieldRef>
+  </ViewFields>`;
+      const queryOptions = `<QueryOptions><ViewAttributes Scope='RecursiveAll'/></QueryOptions>`;
+      let camlQuery = "";
+      if (this.properties.Tipos.length > 0) {
+        camlQuery =
+          `<Query><Where><And><Eq><FieldRef Name="SANAtivo" /><Value Type="Boolean">1</Value></Eq><Contains><FieldRef Name="SANTipo" /><Value Type="TaxonomyFieldTypeMulti">` +
+          this.properties.Tipos[0].name +
+          `</Value></Contains></And></Where><OrderBy><FieldRef Name="Title" Ascending="True" /></OrderBy></Query>`;
+      } else {
+        camlQuery = `<Query><Where><Eq><FieldRef Name="SANAtivo" /><Value Type="Boolean">1</Value></Eq></Where><OrderBy><FieldRef Name="Title" Ascending="True" /></OrderBy></Query>`;
+      }
+
+      w.lists
+        .getByTitle("Pages")
+        .getItemsByCAMLQuery(
+          {
+            ViewXml: `<View>${camlQuery}${queryOptions}${viewFields}</View>`,
+          },
+          "FieldValuesAsText",
+          "EncodedAbsUrl"
+        )
+        .then((itens) => {
+          itens.forEach((item) => {
+            this.options.push({ key: item.Id, text: item.Title });
+          });
+          this.context.propertyPane.refresh();
+          this.render();
+        });
     }
   }
 
@@ -73,10 +117,19 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
       const queryOptions = `<QueryOptions><ViewAttributes Scope='RecursiveAll'/></QueryOptions>`;
       let camlQuery = "";
       if (this.properties.Area.length > 0) {
-        camlQuery =
-          `<Query><Where><And><Eq><FieldRef Name="SANAtivo" /><Value Type="Boolean">1</Value></Eq><Contains><FieldRef Name="SANAreas" /><Value Type="TaxonomyFieldTypeMulti">` +
-          this.properties.Area[0].name +
-          `</Value></Contains></And></Where><OrderBy><FieldRef Name="Title" Ascending="True" /></OrderBy></Query>`;
+        if (this.properties.Tipos.length > 0) {
+          camlQuery =
+            `<Query><Where><And><Contains><FieldRef Name="SANAreas" /><Value Type="TaxonomyFieldTypeMulti">` +
+            this.properties.Area[0].name +
+            `</Value></Contains><Contains><FieldRef Name="SANTipo" /><Value Type="TaxonomyFieldType">` +
+            this.properties.Tipos[0].name +
+            `</Value></Contains></And></Where></Query>`;
+        } else {
+          camlQuery =
+            `<Query><Where><And><Eq><FieldRef Name="SANAtivo" /><Value Type="Boolean">1</Value></Eq><Contains><FieldRef Name="SANAreas" /><Value Type="TaxonomyFieldTypeMulti">` +
+            this.properties.Area[0].name +
+            `</Value></Contains></And></Where><OrderBy><FieldRef Name="Title" Ascending="True" /></OrderBy></Query>`;
+        }
       } else {
         camlQuery = `<Query><Where><Eq><FieldRef Name="SANAtivo" /><Value Type="Boolean">1</Value></Eq></Where><OrderBy><FieldRef Name="Title" Ascending="True" /></OrderBy></Query>`;
       }
@@ -381,6 +434,22 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
                 PropertyPaneTextField("ListName", {
                   label: strings.ListNameLabel,
                 }),
+                PropertyFieldTermPicker("Tipos", {
+                  label: "Selecione o Tipo",
+                  panelTitle: "Selecione o Tipo",
+                  initialValues: this.properties.Tipos,
+                  allowMultipleSelections: true,
+                  excludeSystemGroup: false,
+                  onPropertyChange: this.onPropertyPaneFieldChanged2,
+                  properties: this.properties,
+                  context: this.context,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  limitByGroupNameOrID:
+                    "Site Collection - santandernet.sharepoint.com-sites-IPPortugal",
+                  limitByTermsetNameOrID: "Tipos",
+                  key: "termSetsPickerFieldId",
+                }),
                 PropertyFieldTermPicker("Area", {
                   label: "Selecione a Área",
                   panelTitle: "Selecione a Área",
@@ -397,6 +466,7 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
                   limitByTermsetNameOrID: "Areas",
                   key: "termSetsPickerFieldId",
                 }),
+
                 PropertyFieldMultiSelect("multiSelect", {
                   key: "multiSelect",
                   label: "Destaques",
