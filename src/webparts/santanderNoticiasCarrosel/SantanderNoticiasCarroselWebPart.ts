@@ -44,6 +44,7 @@ export interface ISantanderNoticiasCarroselWebPartProps {
   Caml: string;
   multiSelect: string[];
   Area: IPickerTerms;
+  isProduto: boolean;
 }
 
 export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebPart<
@@ -148,6 +149,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
         carousel.datasource = this.NoticiasCarrosel;
         carousel.readmore = this.properties.ReadMore;
         carousel.readmoreon = this.properties.ReadMoreOn;
+        carousel.isProduto = this.properties.isProduto;
         this.domElement.innerHTML = "";
         this.domElement.appendChild(carousel);
       });
@@ -160,6 +162,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
               "snt-carousel-interno"
             );
             carousel.datasource = this.NoticiasCarroselInterno;
+            carousel.isProduto = this.properties.isProduto;
             this.domElement.innerHTML = "";
             this.domElement.appendChild(carousel);
           }
@@ -386,7 +389,9 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
         itemNoticiasCarrosel.push({
           Id: r[i].ID,
           Title: r[i].Title,
-          Created: r[i].Created,
+          Created: this.properties.isProduto
+            ? r[i].Created
+            : r[i].SANDataInicioComercializacao,
           CreatedBy: null,
           SANSinopse1: r[i].SANSinopse1,
           SANAreas: r[i].SANAreas,
@@ -402,6 +407,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
           SANDestaqueCarrosel: iconUrl + "?RenditionID=13",
           SANDestaqueCarrosel2: iconUrl + "?RenditionID=13",
           link: r[i].EncodedAbsUrl,
+          SANFamilia: r[i].SANFamilia,
         });
       }
       this._NoticiasContentInterno.Carrosel = itemNoticiasCarrosel;
@@ -502,6 +508,9 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
                 }),
                 PropertyPaneTextField("Caml", {
                   label: strings.CamlLabel,
+                }),
+                PropertyPaneToggle("isProduto", {
+                  label: "Produtos e campanhas",
                 }),
               ],
             },
