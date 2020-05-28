@@ -25,6 +25,8 @@ import {
   IPickerTerms,
 } from "@pnp/spfx-property-controls/lib/PropertyFieldTermPicker";
 
+import { PropertyFieldOrder } from "@pnp/spfx-property-controls/lib/PropertyFieldOrder";
+
 import { PropertyFieldMultiSelect } from "@pnp/spfx-property-controls/lib/PropertyFieldMultiSelect";
 
 import { sp } from "@pnp/sp";
@@ -43,6 +45,7 @@ export interface ISantanderNoticiasHomeWebPartProps {
   multiSelect: string[];
   Area: IPickerTerms;
   Tipos: IPickerTerms;
+  orderedItems: Array<any>;
 }
 
 export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
@@ -282,14 +285,19 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
         "FieldValuesAsText",
         "EncodedAbsUrl"
       );
+
+      let rFilter = this.properties.multiSelect.map((val) =>
+        r.find((item) => item.Id === val)
+      );
+
       const quantidadeCarrosel = quantidade - 1;
       var itemBox1: PublishingPage[] = [];
       var itemBox2: PublishingPage;
       let CountBox1 = 0;
-      for (var i = 0; i < r.length; i++) {
+      for (var i = 0; i < rFilter.length; i++) {
         let iconUrl = null;
         const matches = /SANDestaquePub:SW\|(.*?)\r\n/gi.exec(
-          r[i].FieldValuesAsText.MetaInfo
+          rFilter[i].FieldValuesAsText.MetaInfo
         );
         if (matches !== null && matches.length > 1) {
           // this wil be the value of the PublishingPageImage field
@@ -297,24 +305,24 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
         }
         if (i < quantidadeCarrosel) {
           itemBox1.push({
-            Id: r[i].ID,
-            Title: r[i].Title,
-            Created: r[i].Created,
+            Id: rFilter[i].ID,
+            Title: rFilter[i].Title,
+            Created: rFilter[i].Created,
             CreatedBy: null,
-            SANSinopse1: r[i].SANSinopse1,
-            SANAreas: r[i].SANAreas,
-            SANAtivo: r[i].SANAtivo,
-            SANCategorias: r[i].SANCategorias,
-            SANDestaqueHome: r[i].SANDestaqueHome,
-            SANOrdem1: r[i].SANOrdem1,
+            SANSinopse1: rFilter[i].SANSinopse1,
+            SANAreas: rFilter[i].SANAreas,
+            SANAtivo: rFilter[i].SANAtivo,
+            SANCategorias: rFilter[i].SANCategorias,
+            SANDestaqueHome: rFilter[i].SANDestaqueHome,
+            SANOrdem1: rFilter[i].SANOrdem1,
             SANResponsavel: null,
-            SANSubTitulo1: r[i].SANSubTitulo1,
-            SANFullHtml: r[i].SANSinopse1,
-            SANDataVigencia: r[i].SANDataVigencia,
+            SANSubTitulo1: rFilter[i].SANSubTitulo1,
+            SANFullHtml: rFilter[i].SANSinopse1,
+            SANDataVigencia: rFilter[i].SANDataVigencia,
             SANDestaquePub: iconUrl,
             SANDestaqueCarrosel: iconUrl + "?RenditionID=7",
             SANDestaqueCarrosel2: iconUrl + "?RenditionID=11",
-            link: r[i].EncodedAbsUrl,
+            link: rFilter[i].EncodedAbsUrl,
           });
           if (i == quantidadeCarrosel - 1) {
             CountBox1++;
@@ -322,24 +330,24 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
         }
         if (CountBox1 == 1) {
           itemBox2 = {
-            Id: r[i].ID,
-            Title: r[i].Title,
-            Created: r[i].Created,
+            Id: rFilter[i].ID,
+            Title: rFilter[i].Title,
+            Created: rFilter[i].Created,
             CreatedBy: null,
-            SANSinopse1: r[i].SANSinopse1,
-            SANAreas: r[i].SANAreas,
-            SANAtivo: r[i].SANAtivo,
-            SANCategorias: r[i].SANCategorias,
-            SANDestaqueHome: r[i].SANDestaqueHome,
-            SANOrdem1: r[i].SANOrdem1,
+            SANSinopse1: rFilter[i].SANSinopse1,
+            SANAreas: rFilter[i].SANAreas,
+            SANAtivo: rFilter[i].SANAtivo,
+            SANCategorias: rFilter[i].SANCategorias,
+            SANDestaqueHome: rFilter[i].SANDestaqueHome,
+            SANOrdem1: rFilter[i].SANOrdem1,
             SANResponsavel: null,
-            SANSubTitulo1: r[i].SANSubTitulo1,
-            SANFullHtml: r[i].SANSinopse1,
-            SANDataVigencia: r[i].SANDataVigencia,
+            SANSubTitulo1: rFilter[i].SANSubTitulo1,
+            SANFullHtml: rFilter[i].SANSinopse1,
+            SANDataVigencia: rFilter[i].SANDataVigencia,
             SANDestaquePub: iconUrl,
             SANDestaqueCarrosel: iconUrl + "?RenditionID=7",
             SANDestaqueCarrosel2: iconUrl + "?RenditionID=11",
-            link: r[i].EncodedAbsUrl,
+            link: rFilter[i].EncodedAbsUrl,
           };
         }
       }
@@ -375,34 +383,39 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
       var itemBox1: PublishingPage[] = [];
       var itemBox2: PublishingPage;
       let CountBox1 = 0;
-      for (var i = 0; i < r.length; i++) {
+
+      let rFilter = this.properties.multiSelect.map((val) =>
+        r.find((item) => item.Id === val)
+      );
+
+      for (var i = 0; i < rFilter.length; i++) {
         let iconUrl = null;
         const matches = /SANDestaquePub:SW\|(.*?)\r\n/gi.exec(
-          r[i].FieldValuesAsText.MetaInfo
+          rFilter[i].FieldValuesAsText.MetaInfo
         );
         if (matches !== null && matches.length > 1) {
           // this wil be the value of the PublishingPageImage field
           iconUrl = new SPFXutils().extractIMGUrl(matches[1], "noticias");
         }
         itemBox1.push({
-          Id: r[i].ID,
-          Title: r[i].Title,
-          Created: r[i].Created,
+          Id: rFilter[i].ID,
+          Title: rFilter[i].Title,
+          Created: rFilter[i].Created,
           CreatedBy: null,
-          SANSinopse1: r[i].SANSinopse1,
-          SANAreas: r[i].SANAreas,
-          SANAtivo: r[i].SANAtivo,
-          SANCategorias: r[i].SANCategorias,
-          SANDestaqueHome: r[i].SANDestaqueHome,
-          SANOrdem1: r[i].SANOrdem1,
+          SANSinopse1: rFilter[i].SANSinopse1,
+          SANAreas: rFilter[i].SANAreas,
+          SANAtivo: rFilter[i].SANAtivo,
+          SANCategorias: rFilter[i].SANCategorias,
+          SANDestaqueHome: rFilter[i].SANDestaqueHome,
+          SANOrdem1: rFilter[i].SANOrdem1,
           SANResponsavel: null,
-          SANSubTitulo1: r[i].SANSubTitulo1,
-          SANFullHtml: r[i].SANSinopse1,
-          SANDataVigencia: r[i].SANDataVigencia,
+          SANSubTitulo1: rFilter[i].SANSubTitulo1,
+          SANFullHtml: rFilter[i].SANSinopse1,
+          SANDataVigencia: rFilter[i].SANDataVigencia,
           SANDestaquePub: iconUrl,
           SANDestaqueCarrosel: iconUrl + "?RenditionID=7",
           SANDestaqueCarrosel2: iconUrl + "?RenditionID=11",
-          link: r[i].EncodedAbsUrl,
+          link: rFilter[i].EncodedAbsUrl,
         });
       }
       this._NoticiasContent.Box1 = itemBox1;
@@ -472,6 +485,13 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
                   label: "Destaques",
                   options: this.options,
                   selectedKeys: this.properties.multiSelect,
+                }),
+                PropertyFieldOrder("orderedItems", {
+                  key: "orderedItems",
+                  label: "Ordem",
+                  items: this.properties.multiSelect,
+                  properties: this.properties,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                 }),
               ],
             },

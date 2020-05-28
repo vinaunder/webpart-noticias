@@ -31,6 +31,8 @@ import {
   IPickerTerms,
 } from "@pnp/spfx-property-controls/lib/PropertyFieldTermPicker";
 
+import { PropertyFieldOrder } from "@pnp/spfx-property-controls/lib/PropertyFieldOrder";
+
 import { PropertyFieldMultiSelect } from "@pnp/spfx-property-controls/lib/PropertyFieldMultiSelect";
 
 export interface ISantanderNoticiasCarroselWebPartProps {
@@ -46,6 +48,7 @@ export interface ISantanderNoticiasCarroselWebPartProps {
   Area: IPickerTerms;
   Tipos: IPickerTerms;
   isProduto: boolean;
+  orderedItems: Array<any>;
 }
 
 export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebPart<
@@ -305,11 +308,17 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
 
       // look through the returned items.
       let CountBox1 = 1;
-      for (var i = 0; i < r.length; i++) {
+      //const sorted = sort.map((val) => items.find((item) => item.id === val));
+
+      let rFilter = this.properties.multiSelect.map((val) =>
+        r.find((item) => item.Id === val)
+      );
+
+      for (var i = 0; i < rFilter.length; i++) {
         let iconUrl = null;
 
         const matches = /SANDestaquePub:SW\|(.*?)\r\n/gi.exec(
-          r[i].FieldValuesAsText.MetaInfo
+          rFilter[i].FieldValuesAsText.MetaInfo
         );
         if (matches !== null && matches.length > 1) {
           // this wil be the value of the PublishingPageImage field
@@ -317,68 +326,68 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
         }
         if (i < quantidadeCarrosel) {
           itemNoticiasCarrosel.push({
-            Id: r[i].ID,
-            Title: r[i].Title,
-            Created: r[i].Created,
+            Id: rFilter[i].ID,
+            Title: rFilter[i].Title,
+            Created: rFilter[i].Created,
             CreatedBy: null,
-            SANSinopse1: r[i].SANSinopse1,
-            SANAreas: r[i].SANAreas,
-            SANAtivo: r[i].SANAtivo,
-            SANCategorias: r[i].SANCategorias,
-            SANDestaqueHome: r[i].SANDestaqueHome,
-            SANOrdem1: r[i].SANOrdem1,
+            SANSinopse1: rFilter[i].SANSinopse1,
+            SANAreas: rFilter[i].SANAreas,
+            SANAtivo: rFilter[i].SANAtivo,
+            SANCategorias: rFilter[i].SANCategorias,
+            SANDestaqueHome: rFilter[i].SANDestaqueHome,
+            SANOrdem1: rFilter[i].SANOrdem1,
             SANResponsavel: null,
-            SANSubTitulo1: r[i].SANSubTitulo1,
-            SANFullHtml: r[i].SANSinopse1,
-            SANDataVigencia: r[i].SANDataVigencia,
+            SANSubTitulo1: rFilter[i].SANSubTitulo1,
+            SANFullHtml: rFilter[i].SANSinopse1,
+            SANDataVigencia: rFilter[i].SANDataVigencia,
             SANDestaquePub: iconUrl,
             SANDestaqueCarrosel: iconUrl + "?RenditionID=5",
             SANDestaqueCarrosel2: iconUrl + "?RenditionID=7",
-            link: r[i].EncodedAbsUrl,
+            link: rFilter[i].EncodedAbsUrl,
           });
         }
         if (CountBox1 == 4) {
           ItemNoticiaBox1 = {
-            Id: r[i].ID,
-            Title: r[i].Title,
-            Created: r[i].Created,
+            Id: rFilter[i].ID,
+            Title: rFilter[i].Title,
+            Created: rFilter[i].Created,
             CreatedBy: null,
-            SANSinopse1: r[i].SANSinopse1,
-            SANAreas: r[i].SANAreas,
-            SANAtivo: r[i].SANAtivo,
-            SANCategorias: r[i].SANCategorias,
-            SANDestaqueHome: r[i].SANDestaqueHome,
-            SANOrdem1: r[i].SANOrdem1,
+            SANSinopse1: rFilter[i].SANSinopse1,
+            SANAreas: rFilter[i].SANAreas,
+            SANAtivo: rFilter[i].SANAtivo,
+            SANCategorias: rFilter[i].SANCategorias,
+            SANDestaqueHome: rFilter[i].SANDestaqueHome,
+            SANOrdem1: rFilter[i].SANOrdem1,
             SANResponsavel: null,
-            SANSubTitulo1: r[i].SANSubTitulo1,
-            SANFullHtml: r[i].SANSinopse1,
-            SANDataVigencia: r[i].SANDataVigencia,
+            SANSubTitulo1: rFilter[i].SANSubTitulo1,
+            SANFullHtml: rFilter[i].SANSinopse1,
+            SANDataVigencia: rFilter[i].SANDataVigencia,
             SANDestaquePub: iconUrl,
             SANDestaqueCarrosel: iconUrl + "?RenditionID=5",
             SANDestaqueCarrosel2: iconUrl + "?RenditionID=6",
-            link: r[i].EncodedAbsUrl,
+            link: rFilter[i].EncodedAbsUrl,
           };
         }
         if (CountBox1 == 5) {
           ItemNoticiaBox2 = {
-            Id: r[i].ID,
-            Title: r[i].Title,
-            Created: r[i].Created,
+            Id: rFilter[i].ID,
+            Title: rFilter[i].Title,
+            Created: rFilter[i].Created,
             CreatedBy: null,
-            SANSinopse1: r[i].SANSinopse1,
-            SANAreas: r[i].SANAreas,
-            SANAtivo: r[i].SANAtivo,
-            SANCategorias: r[i].SANCategorias,
-            SANDestaqueHome: r[i].SANDestaqueHome,
-            SANOrdem1: r[i].SANOrdem1,
+            SANSinopse1: rFilter[i].SANSinopse1,
+            SANAreas: rFilter[i].SANAreas,
+            SANAtivo: rFilter[i].SANAtivo,
+            SANCategorias: rFilter[i].SANCategorias,
+            SANDestaqueHome: rFilter[i].SANDestaqueHome,
+            SANOrdem1: rFilter[i].SANOrdem1,
             SANResponsavel: null,
-            SANSubTitulo1: r[i].SANSubTitulo1,
-            SANFullHtml: r[i].SANSinopse1,
-            SANDataVigencia: r[i].SANDataVigencia,
+            SANSubTitulo1: rFilter[i].SANSubTitulo1,
+            SANFullHtml: rFilter[i].SANSinopse1,
+            SANDataVigencia: rFilter[i].SANDataVigencia,
             SANDestaquePub: iconUrl,
             SANDestaqueCarrosel: iconUrl + "?RenditionID=5",
             SANDestaqueCarrosel2: iconUrl + "?RenditionID=6",
-            link: r[i].EncodedAbsUrl,
+            link: rFilter[i].EncodedAbsUrl,
           };
         }
         CountBox1++;
@@ -427,40 +436,44 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
 
       let itemNoticiasCarrosel: PublishingPage[] = [];
 
+      let rFilter = this.properties.multiSelect.map((val) =>
+        r.find((item) => item.Id === val)
+      );
+
       // look through the returned items.
       let CountBox1 = 0;
-      for (var i = 0; i < r.length; i++) {
+      for (var i = 0; i < rFilter.length; i++) {
         let iconUrl = null;
 
         const matches = /SANDestaquePub:SW\|(.*?)\r\n/gi.exec(
-          r[i].FieldValuesAsText.MetaInfo
+          rFilter[i].FieldValuesAsText.MetaInfo
         );
         if (matches !== null && matches.length > 1) {
           // this wil be the value of the PublishingPageImage field
           iconUrl = new SPFXutils().extractIMGUrl(matches[1], "noticias");
         }
         itemNoticiasCarrosel.push({
-          Id: r[i].ID,
-          Title: r[i].Title,
+          Id: rFilter[i].ID,
+          Title: rFilter[i].Title,
           Created: this.properties.isProduto
-            ? r[i].SANDataInicioComercializacao
-            : r[i].Created,
+            ? rFilter[i].SANDataInicioComercializacao
+            : rFilter[i].Created,
           CreatedBy: null,
-          SANSinopse1: r[i].SANSinopse1,
-          SANAreas: r[i].SANAreas,
-          SANAtivo: r[i].SANAtivo,
-          SANCategorias: r[i].SANCategorias,
-          SANDestaqueHome: r[i].SANDestaqueHome,
-          SANOrdem1: r[i].SANOrdem1,
+          SANSinopse1: rFilter[i].SANSinopse1,
+          SANAreas: rFilter[i].SANAreas,
+          SANAtivo: rFilter[i].SANAtivo,
+          SANCategorias: rFilter[i].SANCategorias,
+          SANDestaqueHome: rFilter[i].SANDestaqueHome,
+          SANOrdem1: rFilter[i].SANOrdem1,
           SANResponsavel: null,
-          SANSubTitulo1: r[i].SANSubTitulo1,
-          SANFullHtml: r[i].SANSinopse1,
-          SANDataVigencia: r[i].SANDataVigencia,
+          SANSubTitulo1: rFilter[i].SANSubTitulo1,
+          SANFullHtml: rFilter[i].SANSinopse1,
+          SANDataVigencia: rFilter[i].SANDataVigencia,
           SANDestaquePub: iconUrl,
           SANDestaqueCarrosel: iconUrl + "?RenditionID=13",
           SANDestaqueCarrosel2: iconUrl + "?RenditionID=13",
-          link: r[i].EncodedAbsUrl,
-          SANFamilia: r[i].SANFamilia,
+          link: rFilter[i].EncodedAbsUrl,
+          SANFamilia: rFilter[i].SANFamilia,
         });
       }
       this._NoticiasContentInterno.Carrosel = itemNoticiasCarrosel;
@@ -534,6 +547,13 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
                   label: "Destaques",
                   options: this.options,
                   selectedKeys: this.properties.multiSelect,
+                }),
+                PropertyFieldOrder("orderedItems", {
+                  key: "orderedItems",
+                  label: "Ordem",
+                  items: this.properties.multiSelect,
+                  properties: this.properties,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
                 }),
                 PropertyPaneTextField("ReadMore", {
                   label: strings.ReadMoreLabel,
