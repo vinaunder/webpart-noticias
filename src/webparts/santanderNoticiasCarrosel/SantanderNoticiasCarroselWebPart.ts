@@ -346,7 +346,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             link: rFilter[i].EncodedAbsUrl,
           });
         }
-        if (CountBox1 == 4) {
+        if (CountBox1 == quantidadeCarrosel + 1) {
           ItemNoticiaBox1 = {
             Id: rFilter[i].ID,
             Title: rFilter[i].Title,
@@ -368,7 +368,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             link: rFilter[i].EncodedAbsUrl,
           };
         }
-        if (CountBox1 == 5) {
+        if (CountBox1 == quantidadeCarrosel + 2) {
           ItemNoticiaBox2 = {
             Id: rFilter[i].ID,
             Title: rFilter[i].Title,
