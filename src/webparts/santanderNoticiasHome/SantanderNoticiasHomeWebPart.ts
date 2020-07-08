@@ -307,7 +307,7 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
           itemBox1.push({
             Id: rFilter[i].ID,
             Title: rFilter[i].Title,
-            Created: rFilter[i].Created,
+            Created: rFilter[i].SANDataPublicacao,
             CreatedBy: null,
             SANSinopse1: rFilter[i].SANSinopse1,
             SANAreas: rFilter[i].SANAreas,
@@ -332,7 +332,7 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
           itemBox2 = {
             Id: rFilter[i].ID,
             Title: rFilter[i].Title,
-            Created: rFilter[i].Created,
+            Created: rFilter[i].SANDataPublicacao,
             CreatedBy: null,
             SANSinopse1: rFilter[i].SANSinopse1,
             SANAreas: rFilter[i].SANAreas,
@@ -400,7 +400,7 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
         itemBox1.push({
           Id: rFilter[i].ID,
           Title: rFilter[i].Title,
-          Created: rFilter[i].Created,
+          Created: rFilter[i].SANDataPublicacao,
           CreatedBy: null,
           SANSinopse1: rFilter[i].SANSinopse1,
           SANAreas: rFilter[i].SANAreas,

@@ -328,7 +328,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
           itemNoticiasCarrosel.push({
             Id: rFilter[i].ID,
             Title: rFilter[i].Title,
-            Created: rFilter[i].Created,
+            Created: rFilter[i].SANDataPublicacao,
             CreatedBy: null,
             SANSinopse1: rFilter[i].SANSinopse1,
             SANAreas: rFilter[i].SANAreas,
@@ -350,7 +350,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
           ItemNoticiaBox1 = {
             Id: rFilter[i].ID,
             Title: rFilter[i].Title,
-            Created: rFilter[i].Created,
+            Created: rFilter[i].SANDataPublicacao,
             CreatedBy: null,
             SANSinopse1: rFilter[i].SANSinopse1,
             SANAreas: rFilter[i].SANAreas,
@@ -372,7 +372,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
           ItemNoticiaBox2 = {
             Id: rFilter[i].ID,
             Title: rFilter[i].Title,
-            Created: rFilter[i].Created,
+            Created: rFilter[i].SANDataPublicacao,
             CreatedBy: null,
             SANSinopse1: rFilter[i].SANSinopse1,
             SANAreas: rFilter[i].SANAreas,
@@ -457,7 +457,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
           Title: rFilter[i].Title,
           Created: this.properties.isProduto
             ? rFilter[i].SANDataInicioComercializacao
-            : rFilter[i].Created,
+            : rFilter[i].SANDataPublicacao,
           CreatedBy: null,
           SANSinopse1: rFilter[i].SANSinopse1,
           SANAreas: rFilter[i].SANAreas,

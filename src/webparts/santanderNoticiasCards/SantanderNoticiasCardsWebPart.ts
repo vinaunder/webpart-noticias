@@ -128,7 +128,7 @@ export default class SantanderNoticiasCardsWebPart extends BaseClientSideWebPart
         itemNoticias.push({
           Id: r[i].ID,
           Title: r[i].Title,
-          Created: r[i].Created,
+          Created: r[i].SANDataPublicacao,
           CreatedBy: null,
           SANSinopse1: r[i].SANSinopse1,
           SANAreas: r[i].SANAreas,
