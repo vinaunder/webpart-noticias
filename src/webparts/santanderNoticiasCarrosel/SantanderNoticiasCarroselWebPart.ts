@@ -48,6 +48,7 @@ export interface ISantanderNoticiasCarroselWebPartProps {
   Area: IPickerTerms;
   Tipos: IPickerTerms;
   isProduto: boolean;
+  isDate: boolean;
   orderedItems: Array<any>;
   siteurlbanner: string;
   listnamebanner: string;
@@ -247,6 +248,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
               carousel.bannerimg = item.SANIconNormal +"?RenditionID=21";
               carousel.bannerurl = item.SANLink;
               carousel.bannertarget = item.SANNewWindown;
+              carousel.isDate = this.properties.isDate;
               this.domElement.innerHTML = "";
               this.domElement.appendChild(carousel);
             }
@@ -689,6 +691,9 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
                 }),
                 PropertyPaneTextField("bannerid", {
                   label: strings.banneridLabel,
+                }),
+                PropertyPaneToggle("isDate", {
+                  label: "Mostrar Data",
                 }),
               ],
             },
