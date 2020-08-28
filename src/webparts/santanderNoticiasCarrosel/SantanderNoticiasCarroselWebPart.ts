@@ -49,6 +49,12 @@ export interface ISantanderNoticiasCarroselWebPartProps {
   Tipos: IPickerTerms;
   isProduto: boolean;
   orderedItems: Array<any>;
+  siteurlbanner: string;
+  listnamebanner: string;
+  bannerurl: string;
+  bannerimg: string;
+  bannertarget: string;
+  bannerid: string;
 }
 
 export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebPart<
@@ -197,6 +203,9 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
 
   public NoticiasCarrosel: NoticiasCarrosel;
   public NoticiasCarroselInterno: NoticiasCarroselInterno;
+  public bannerimg: string;
+  public bannerurl: string;
+  public bannertarget: string;
   public render(): void {
     if (this.properties.Layout == "2colunas") {
       this.getAllListItemsCarrosel().then((ret: NoticiasCarrosel): void => {
@@ -222,6 +231,26 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             this.domElement.innerHTML = "";
             this.domElement.appendChild(carousel);
           }
+        }
+      );
+    } else if (this.properties.Layout == "banner") {
+      this.getAllListItemsCarroseInterno().then(
+        (ret: NoticiasCarroselInterno): void => {
+          this.getBanners().then((item: any): void => {
+            if (ret.Carrosel.length > 0 && item) {
+              this.NoticiasCarroselInterno = ret;
+              const carousel: any = document.createElement(
+                "snt-carousel-banner"
+              );
+              carousel.datasource = this.NoticiasCarroselInterno;
+              carousel.isProduto = this.properties.isProduto;
+              carousel.bannerimg = item.SANIconNormal +"?RenditionID=21";
+              carousel.bannerurl = item.SANLink;
+              carousel.bannertarget = item.SANNewWindown;
+              this.domElement.innerHTML = "";
+              this.domElement.appendChild(carousel);
+            }
+          });
         }
       );
     }
@@ -483,6 +512,44 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
     }
   }
 
+  public async getBanners(): Promise<any> {
+    try {
+      const w = Web(this.properties.siteurlbanner);
+      const queryOptions = `<QueryOptions><ViewAttributes Scope='RecursiveAll'/></QueryOptions>`;
+      let camlQuery =
+        `<Query><Where><And><Eq><FieldRef Name="SANAtivo" /><Value Type="Boolean">1</Value></Eq><Eq><FieldRef Name="ID" /><Value Type="Counter">` +
+        this.properties.bannerid +
+        `</Value></Eq></And></Where></Query>`;
+
+      const r = await w.lists
+        .getByTitle(this.properties.listnamebanner)
+        .renderListDataAsStream({
+          ViewXml: `<view>${camlQuery}${queryOptions}</view>`,
+        });
+      var itemBanner: any;
+      // look through the returned items.
+      for (var i = 0; i < r.Row.length; i++) {
+        itemBanner = {
+          Id: r.Row[i].ID,
+          Title: r.Row[i].Title,
+          SANAtivo: true,
+          SANIconNormal: new SPFXutils().extractIMGUrl(
+            r.Row[i].SANDestaquePub,
+            "banner"
+          ),
+          SANLink:
+            r.Row[i].SANLinkMult == ""
+              ? r.Row[i].SANLink
+              : r.Row[i].SANLinkMult,
+          SANNewWindown: r.Row[i].SANNewWindown,
+        };
+      }
+      return itemBanner;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   protected get dataVersion(): Version {
     return Version.parse("1.0");
   }
@@ -503,6 +570,12 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
                 }),
                 PropertyPaneTextField("ListName", {
                   label: strings.ListNameLabel,
+                }),
+                PropertyPaneTextField("siteurlbanner", {
+                  label: strings.SiteUrlbannerLabel,
+                }),
+                PropertyPaneTextField("listnamebanner", {
+                  label: strings.ListNamebannerLabel,
                 }),
               ],
             },
@@ -588,6 +661,18 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
                       selectedImageSrc:
                         "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
                     },
+                    {
+                      key: "banner",
+                      text: "Carousel Home - Com Banners",
+                      imageSrc:
+                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
+                      imageSize: {
+                        width: 32,
+                        height: 32,
+                      },
+                      selectedImageSrc:
+                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
+                    },
                   ],
                 }),
                 PropertyPaneSlider("QtdItens", {
@@ -601,6 +686,9 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
                 }),
                 PropertyPaneToggle("isProduto", {
                   label: "Produtos e campanhas",
+                }),
+                PropertyPaneTextField("bannerid", {
+                  label: strings.banneridLabel,
                 }),
               ],
             },

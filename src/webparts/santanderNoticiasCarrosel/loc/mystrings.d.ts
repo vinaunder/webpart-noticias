@@ -10,6 +10,9 @@ declare interface ISantanderNoticiasCarroselWebPartStrings {
   ReadMoreOnLabel: string;
   LayoutLabel: string;
   CamlLabel: string;
+  SiteUrlbannerLabel: string;
+  ListNamebannerLabel: string;
+  banneridLabel: string;
 }
 
 declare module "SantanderNoticiasCarroselWebPartStrings" {
