@@ -500,7 +500,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
           SANDataVigencia: rFilter[i].SANDataVigencia,
           SANDestaquePub: iconUrl,
           SANDestaqueCarrosel: iconUrl + "?RenditionID=13",
-          SANDestaqueCarrosel2: iconUrl + "?RenditionID=13",
+          SANDestaqueCarrosel2: iconUrl + "?RenditionID=5",
           link: rFilter[i].EncodedAbsUrl,
           SANFamilia: rFilter[i].SANFamilia,
         });
