@@ -240,7 +240,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
             if (ret.Carrosel.length > 0 && item) {
               this.NoticiasCarroselInterno = ret;
               const carousel: any = document.createElement(
-                "snt-carousel-banner"
+                "spfx-carousel-banner"
               );
               carousel.datasource = this.NoticiasCarroselInterno;
               carousel.isProduto = this.properties.isProduto;
