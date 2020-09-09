@@ -120,6 +120,7 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
     newValue: any
   ): void {
     if (propertyPath === "Area" && newValue) {
+      this.properties.multiSelect = [];
       super.onPropertyPaneFieldChanged(propertyPath, oldValue, newValue);
       this.options = new Array<IPropertyPaneDropdownOption>();
       const w = Web(this.properties.SiteUrl);

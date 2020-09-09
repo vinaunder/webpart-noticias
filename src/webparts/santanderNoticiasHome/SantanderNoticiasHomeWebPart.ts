@@ -110,6 +110,7 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
     newValue: any
   ): void {
     if (propertyPath === "Area" && newValue) {
+      this.properties.multiSelect = [];
       super.onPropertyPaneFieldChanged(propertyPath, oldValue, newValue);
       this.options = new Array<IPropertyPaneDropdownOption>();
       const w = Web(this.properties.SiteUrl);
