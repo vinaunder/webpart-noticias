@@ -204,7 +204,18 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
           this.domElement.appendChild(home);
         }
       });
-    } else {
+    }else if(this.properties.Layout == "digilosofia"){
+      this.getAllListItemsArea().then((ret: NoticiasHome): void => {
+        if (ret.Box1.length > 0) {
+          this.NoticiasHome = ret;
+          const home: any = document.createElement("snt-noticias-home");
+          home.datasource = this.NoticiasHome;
+          home.tipo = "news-content-digilosofia";
+          this.domElement.innerHTML = "";
+          this.domElement.appendChild(home);
+        }
+      });
+    }else {
       this.getAllListItemsLarge().then((ret: NoticiasHome): void => {
         if (ret.Box1.length > 0) {
           this.NoticiasHome = ret;
@@ -523,6 +534,18 @@ export default class SantanderNoticiasHomeWebPart extends BaseClientSideWebPart<
                     {
                       key: "large",
                       text: "Noticias Large",
+                      imageSrc:
+                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
+                      imageSize: {
+                        width: 32,
+                        height: 32,
+                      },
+                      selectedImageSrc:
+                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
+                    },
+                    {
+                      key: "digilosofia",
+                      text: "Digilosofia",
                       imageSrc:
                         "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
                       imageSize: {
