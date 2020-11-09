@@ -256,6 +256,21 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
           });
         }
       );
+    }else if (this.properties.Layout == "noticiadia") {
+      this.getAllListItemsCarroseInterno().then(
+        (ret: NoticiasCarroselInterno): void => {
+          if (ret.Carrosel.length > 0) {
+            this.NoticiasCarroselInterno = ret;
+            const carousel: any = document.createElement(
+              "snt-carousel-noticiadia"
+            );
+            carousel.datasource = this.NoticiasCarroselInterno;
+            carousel.isProduto = this.properties.isProduto;
+            this.domElement.innerHTML = "";
+            this.domElement.appendChild(carousel);
+          }
+        }
+      );
     }
   }
 
@@ -667,6 +682,18 @@ export default class SantanderNoticiasCarroselWebPart extends BaseClientSideWebP
                     {
                       key: "banner",
                       text: "Carousel Home - Com Banners",
+                      imageSrc:
+                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
+                      imageSize: {
+                        width: 32,
+                        height: 32,
+                      },
+                      selectedImageSrc:
+                        "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
+                    },
+                    {
+                      key: "noticiadia",
+                      text: "Notícia do Dia",
                       imageSrc:
                         "https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/choicegroup-bar-selected.png",
                       imageSize: {
