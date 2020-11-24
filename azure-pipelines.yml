@@ -2,23 +2,26 @@
 #Build a general Node.js Project with npm.
 #add steps that analze code, save build, Artifacts, Deploy and more
 
+
 trigger:
 - master
+
 pool:
-vmImage: 'Ubuntu-16.04'
+  vmImage: 'Ubuntu-16.04'
 
 steps:
 - task: NodeTool@0
   inputs:
     versionSpec: '10.x'
   
--script: |
+
+- script: |
     npm install
     npm test
     npm run build
   displayName: 'npm install and test'
 
--script: |
+- script: |
     gulp clean
     gulp bundle --ship
     gulp package-solution --ship
