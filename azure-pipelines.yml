@@ -11,7 +11,21 @@ steps:
 - task: NodeTool@0
   inputs:
     versionSpec: '10.x'
-  -script:
-  npm install
-  npm run build
-  displayName: 'npm install and build'
+  
+-script: |
+    npm install
+    npm test
+    npm run build
+  displayName: 'npm install and test'
+
+-script: |
+    gulp clean
+    gulp bundle --ship
+    gulp package-solution --ship
+  displayName: 'Build and package the solution'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/sharepoint/solution/santander-noticias.sppkg'
+    ArtifactName: 'SPFx sppkg'
+  displayName: 'Publish build SPFx artifacts'
