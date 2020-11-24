@@ -1,95 +1,17 @@
-parameters:
-  # unique name of the job
-  job_name: build_package
-  # friendly name of the job
-  display_name: SPFx production build & packaging
-  # agent pool details (default: MSFT hosted Ubuntu)
-  pool:
-    vmImage: ubuntu-latest
-  # relative path to the project root if not in root of repo
-  working_directory: ''
-  # package manager
-  package_manager: 'npm'
-  # node version
-  node_version: '10.x'
+#Node.js
+#Build a general Node.js Project with npm.
+#add steps that analze code, save build, Artifacts, Deploy and more
 
-jobs:
-- job: ${{ parameters.job_name }}
-  displayName: ${{ parameters.display_name }}
-  pool: ${{ parameters.pool }}
-  steps:
-  ##########################################
-  ## specify which node version to use
-  ##########################################
-  - task: UseNode@1
-    displayName: Set to Node.js ${{ parameters.node_version }}
-    inputs:
-      version: ${{ parameters.node_version }}
-    condition: ne('${{ parameters.node_version }}', '')
-  ##########################################
-  ## install PNPM if that is desired package manager
-  ##########################################
-  - script: sudo npm install --global pnpm
-    displayName: Install PNPM
-    condition: eq('${{ parameters.package_manager }}', 'pnpm')
-  ##########################################
-  ## install dependencies using specified
-  ##    package manager
-  ##########################################
-  - script: npm ci
-    displayName: Install dependencies (with NPM)
-    workingDirectory: ${{ parameters.working_directory }}
-    condition: eq('${{ parameters.package_manager }}', 'npm')
-  - script: yarn install --frozen-lockfile
-    displayName: Install dependencies (with Yarn)
-    workingDirectory: ${{ parameters.working_directory }}
-    condition: eq('${{ parameters.package_manager }}', 'yarn')
-  - script: pnpm install --shamefully-hoist --frozen-lockfile
-    displayName: Install dependencies (with PNPM)
-    workingDirectory: ${{ parameters.working_directory }}
-    condition: eq('${{ parameters.package_manager }}', 'pnpm')
-  ##########################################
-  ## execute: gulp build
-  ##########################################
-  - task: Gulp@1
-    displayName: SPFx build
-    inputs:
-      gulpFile: ${{ parameters.working_directory }}/gulpfile.js
-      workingDirectory: ${{ parameters.working_directory }}
-      targets: build
-  ##########################################
-  ## execute: gulp bundle --ship
-  ##########################################
-  - task: Gulp@1
-    displayName: SPFx bundle (production)
-    inputs:
-      gulpFile: ${{ parameters.working_directory }}/gulpfile.js
-      workingDirectory: ${{ parameters.working_directory }}
-      targets: bundle
-      arguments: --ship
-  ##########################################
-  ## execute: gulp package-solution --ship
-  ##########################################
-  - task: Gulp@1
-    displayName: SPFx package solution (production)
-    inputs:
-      gulpFile: ${{ parameters.working_directory }}/gulpfile.js
-      workingDirectory: ${{ parameters.working_directory }}
-      targets: package-solution
-      arguments: --ship
-  ##########################################
-  ## determine name of generated *.sppkg
-  ##########################################
-  - script: |
-      CMD_GET_SPPKG_NAME=$(find . -name '*.sppkg' -exec basename {} \;)
-      echo "##vso[task.setvariable variable=SpPkgFileName;isOutput=true]${CMD_GET_SPPKG_NAME}"
-    displayName: Get generated *.sppkg filename
-    name: GetSharePointPackage
-  ##########################################
-  ## publish *.sppkg as build artifact
-  ##########################################
-  - task: PublishPipelineArtifact@1
-    displayName: Publish SharePoint package (*.sppkg)
-    inputs:
-      targetPath: $(Build.Repository.LocalPath)/${{ parameters.working_directory }}/sharepoint/solution/$(GetSharePointPackage.SpPkgFileName)
-      artifact: spfx-package
+trigger:
+- master
+pool:
+vmImage: 'Ubuntu-16.04'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  -script:
+  npm install
+  npm run build
+  displayName: 'npm install and build'
