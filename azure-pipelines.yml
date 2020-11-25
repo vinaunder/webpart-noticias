@@ -27,14 +27,15 @@ steps:
     gulp package-solution --ship
   displayName: 'Build and package the solution'
 
-- task: PublishBuildArtifacts@1
+- task: CopyFiles@2
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/sharepoint/solution/santander-noticias.sppkg'
-    ArtifactName: 'SPFx sppkg'
-  displayName: 'Publish build SPFx artifacts'
+    SourceFolder: '$(Build.SourceDirectory)/sharepoint/solution'
+    Contents: 'santander-noticias.sppkg'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/drop'
+  displayName: 'Copy SPFx artifacts'
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/devops/release/'
-    ArtifactName: 'Office 365 CLI scripts'
-  displayName: 'Publish build Office 365 CLI artifacts'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/drop'
+    ArtifactName: 'drop'
+  displayName: 'Publish build SPFx artifacts'
