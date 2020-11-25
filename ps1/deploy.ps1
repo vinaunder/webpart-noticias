@@ -5,7 +5,7 @@ Param(
     [string]$username, # => Office 365 Username
     [string]$psw, # => Office 365 Password
     [string]$catalogSite, # => App Catalog site "https://giuleon.sharepoint.com/sites/apps"
-    [string]$releaseFolder # => TFS folder where the files are extracted
+    [string]$packagePath # => TFS folder where the files are extracted
 )
 #######
 # End #
