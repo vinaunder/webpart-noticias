@@ -40,4 +40,15 @@ steps:
     ArtifactName: 'drop'
     publishLocation: 'Container'
 
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)/ps1'
+    Contents: 'deploy.ps1'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/ps1'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/ps1'
+    ArtifactName: 'ps1'
+    publishLocation: 'Container'
 
